@@ -1,781 +1,811 @@
-/* =================================
-   BLOOMY PLANNER
-================================= */
+:root {
 
+    --bg: #fcf9fb;
+    --white: #ffffff;
 
-/* =================================
-   DATA
-================================= */
+    --text: #3f3940;
+    --muted: #9c929a;
 
-let tasks = [];
+    --pink: #e99ab6;
+    --pink-dark: #d97d9d;
 
-try {
+    --pink-soft: #fff0f5;
+    --lavender: #f3effb;
+    --yellow: #fff8df;
+    --green: #edf7ef;
 
-    tasks =
-        JSON.parse(
-            localStorage.getItem(
-                "bloomyTasks"
-            )
-        ) || [];
+    --border: #f0e6eb;
 
-} catch (error) {
-
-    tasks = [];
+    --shadow:
+        0 14px 40px rgba(91, 61, 78, 0.06);
 
 }
 
 
-let editingTaskId = null;
+* {
 
-let selectedIcon = "🌸";
+    box-sizing: border-box;
 
+    margin: 0;
 
-/* =================================
-   START
-================================= */
+    padding: 0;
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        setupIcons();
-
-        updateToday();
-
-        render();
-
-    }
-);
+}
 
 
-/* =================================
-   ICONS
-================================= */
+html {
 
-function setupIcons() {
+    scroll-behavior: smooth;
 
-    const buttons =
-        document.querySelectorAll(
-            ".icon-option"
-        );
+}
 
 
-    buttons.forEach(button => {
+body {
 
-        button.addEventListener(
-            "click",
-            function () {
+    font-family:
+        "DM Sans",
+        sans-serif;
 
-                selectedIcon =
-                    this.dataset.icon;
+    background: var(--bg);
 
+    color: var(--text);
 
-                buttons.forEach(btn => {
+    min-height: 100vh;
 
-                    btn.classList.remove(
-                        "selected"
-                    );
-
-                });
+}
 
 
-                this.classList.add(
-                    "selected"
-                );
+button,
+input {
 
-            }
-        );
+    font-family: inherit;
 
-    });
+}
+
+
+button {
+
+    border: 0;
+
+    cursor: pointer;
+
+}
+
+
+.hidden {
+
+    display: none !important;
 
 }
 
 
 /* =================================
-   TODAY
+   APP
 ================================= */
 
-function updateToday() {
+.app {
 
-    const today =
-        document.getElementById(
-            "today"
-        );
+    min-height: 100vh;
 
-
-    if (!today) return;
-
-
-    today.textContent =
-        new Date().toLocaleDateString(
-            "en-GB",
-            {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }
-        );
+    display: flex;
 
 }
 
 
 /* =================================
-   PAGE
+   SIDEBAR
 ================================= */
 
-function showPage(page) {
+.sidebar {
 
-    const dashboard =
-        document.getElementById(
-            "dashboardPage"
+    width: 245px;
+
+    min-height: 100vh;
+
+    background: rgba(255,255,255,.82);
+
+    border-right:
+        1px solid var(--border);
+
+    padding:
+        30px 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    position: sticky;
+
+    top: 0;
+
+    height: 100vh;
+
+}
+
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        4px 8px;
+
+}
+
+
+.brand-mark {
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffe8f0,
+            #f8d7e4
         );
 
+    display: flex;
 
-    const tasksPage =
-        document.getElementById(
-            "tasksPage"
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 24px;
+
+}
+
+
+.brand-name {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 22px;
+
+    color: #574b54;
+
+}
+
+
+.brand-sub {
+
+    font-size: 10px;
+
+    color: #b1a5ad;
+
+    margin-top: 2px;
+
+    letter-spacing: .4px;
+
+}
+
+
+.menu-label {
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    color: #c1b5bd;
+
+    margin:
+        45px 12px 10px;
+
+}
+
+
+.navigation {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+.nav-item {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        12px 14px;
+
+    background: transparent;
+
+    border-radius: 13px;
+
+    color: #938790;
+
+    font-size: 13px;
+
+    text-align: left;
+
+    transition:
+        .2s ease;
+
+}
+
+
+.nav-item span:first-child {
+
+    width: 22px;
+
+    text-align: center;
+
+    font-size: 17px;
+
+}
+
+
+.nav-item:hover {
+
+    background: #fff5f8;
+
+    color: var(--pink-dark);
+
+}
+
+
+.nav-item.active {
+
+    background: var(--pink-soft);
+
+    color: var(--pink-dark);
+
+    font-weight: 600;
+
+}
+
+
+.sidebar-note {
+
+    margin-top: auto;
+
+    padding:
+        16px;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff8ed,
+            #fff2f6
         );
 
+    display: flex;
 
-    if (!dashboard || !tasksPage) {
+    gap: 11px;
 
-        return;
+    align-items: center;
 
-    }
-
-
-    dashboard.classList.toggle(
-        "hidden",
-        page !== "dashboard"
-    );
+}
 
 
-    tasksPage.classList.toggle(
-        "hidden",
-        page !== "tasks"
-    );
+.note-flower {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 11px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #d995ae;
+
+}
 
 
-    const buttons =
-        document.querySelectorAll(
-            ".nav-btn"
-        );
+.sidebar-note strong {
+
+    font-size: 11px;
+
+    color: #75656e;
+
+}
 
 
-    buttons.forEach(button => {
+.sidebar-note p {
 
-        button.classList.remove(
-            "active"
-        );
+    font-size: 10px;
 
-    });
+    color: #afa0a8;
 
-
-    if (page === "dashboard") {
-
-        if (buttons[0]) {
-
-            buttons[0].classList.add(
-                "active"
-            );
-
-        }
-
-    } else {
-
-        if (buttons[1]) {
-
-            buttons[1].classList.add(
-                "active"
-            );
-
-        }
-
-    }
-
-
-    render();
+    margin-top: 2px;
 
 }
 
 
 /* =================================
-   OPEN CREATE MODAL
+   MAIN
 ================================= */
 
-function openCreateModal() {
+.main {
 
-    editingTaskId = null;
+    flex: 1;
 
-    selectedIcon = "🌸";
+    width: 100%;
 
+    max-width: 1320px;
 
-    const modal =
-        document.getElementById(
-            "modal"
-        );
-
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        "🌷 Create a new task";
-
-
-    document.getElementById(
-        "saveButton"
-    ).textContent =
-        "🌷 Create Task";
-
-
-    document.getElementById(
-        "taskName"
-    ).value = "";
-
-
-    document.getElementById(
-        "taskDeadline"
-    ).value = "";
-
-
-    document.getElementById(
-        "subtaskInputs"
-    ).innerHTML = "";
-
-
-    addSubtaskInput();
-
-
-    setSelectedIcon(
-        "🌸"
-    );
+    padding:
+        48px 5vw;
 
 }
 
 
-/* =================================
-   CLOSE MODAL
-================================= */
+.page {
 
-function closeModal() {
-
-    document.getElementById(
-        "modal"
-    ).classList.add(
-        "hidden"
-    );
+    animation:
+        pageIn .25s ease;
 
 }
 
 
-/* =================================
-   SELECT ICON
-================================= */
+@keyframes pageIn {
 
-function setSelectedIcon(icon) {
+    from {
 
-    selectedIcon = icon;
+        opacity: 0;
 
-
-    const buttons =
-        document.querySelectorAll(
-            ".icon-option"
-        );
-
-
-    buttons.forEach(button => {
-
-        if (
-            button.dataset.icon ===
-            icon
-        ) {
-
-            button.classList.add(
-                "selected"
-            );
-
-        } else {
-
-            button.classList.remove(
-                "selected"
-            );
-
-        }
-
-    });
-
-}
-
-
-/* =================================
-   ADD SUBTASK INPUT
-================================= */
-
-function addSubtaskInput(
-    value = "",
-    completed = false
-) {
-
-    const container =
-        document.getElementById(
-            "subtaskInputs"
-        );
-
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-
-    wrapper.style.display =
-        "flex";
-
-
-    wrapper.style.gap =
-        "8px";
-
-
-    wrapper.style.marginTop =
-        "8px";
-
-
-    const input =
-        document.createElement(
-            "input"
-        );
-
-
-    input.type = "text";
-
-    input.className =
-        "new-subtask";
-
-
-    input.placeholder =
-        "เช่น เล่มวิจัย";
-
-
-    input.value =
-        value;
-
-
-    input.dataset.completed =
-        completed;
-
-
-    input.style.flex = "1";
-
-    input.style.marginTop = "0";
-
-
-    const removeButton =
-        document.createElement(
-            "button"
-        );
-
-
-    removeButton.type =
-        "button";
-
-
-    removeButton.textContent =
-        "×";
-
-
-    removeButton.style.width =
-        "40px";
-
-
-    removeButton.style.borderRadius =
-        "10px";
-
-
-    removeButton.style.background =
-        "#fff0f0";
-
-
-    removeButton.style.color =
-        "#d97b7b";
-
-
-    removeButton.addEventListener(
-        "click",
-        function () {
-
-            wrapper.remove();
-
-        }
-    );
-
-
-    wrapper.appendChild(
-        input
-    );
-
-
-    wrapper.appendChild(
-        removeButton
-    );
-
-
-    container.appendChild(
-        wrapper
-    );
-
-}
-
-
-/* =================================
-   SAVE TASK
-================================= */
-
-function saveTask() {
-
-    const nameInput =
-        document.getElementById(
-            "taskName"
-        );
-
-
-    const deadlineInput =
-        document.getElementById(
-            "taskDeadline"
-        );
-
-
-    const name =
-        nameInput.value.trim();
-
-
-    const deadline =
-        deadlineInput.value;
-
-
-    if (!name) {
-
-        alert(
-            "กรุณาใส่ชื่องานก่อนนะ 🌷"
-        );
-
-        nameInput.focus();
-
-        return;
+        transform:
+            translateY(8px);
 
     }
 
+    to {
 
-    const inputElements =
-        document.querySelectorAll(
-            ".new-subtask"
-        );
+        opacity: 1;
 
-
-    const subtasks = [];
-
-
-    inputElements.forEach(input => {
-
-        const text =
-            input.value.trim();
-
-
-        if (text !== "") {
-
-            subtasks.push({
-
-                text: text,
-
-                completed:
-                    input.dataset.completed
-                    === "true"
-
-            });
-
-        }
-
-    });
-
-
-    /* =============================
-       EDIT
-    ============================= */
-
-    if (
-        editingTaskId !== null
-    ) {
-
-        const task =
-            tasks.find(
-                item =>
-                    item.id ===
-                    editingTaskId
-            );
-
-
-        if (task) {
-
-            task.name =
-                name;
-
-
-            task.icon =
-                selectedIcon;
-
-
-            task.deadline =
-                deadline;
-
-
-            task.subtasks =
-                subtasks;
-
-        }
+        transform:
+            translateY(0);
 
     }
-
-
-    /* =============================
-       CREATE
-    ============================= */
-
-    else {
-
-        const newTask = {
-
-            id:
-                Date.now(),
-
-            name:
-                name,
-
-            icon:
-                selectedIcon,
-
-            deadline:
-                deadline,
-
-            subtasks:
-                subtasks
-
-        };
-
-
-        tasks.push(
-            newTask
-        );
-
-    }
-
-
-    saveData();
-
-
-    closeModal();
-
-
-    render();
 
 }
 
 
 /* =================================
-   EDIT TASK
+   HERO
 ================================= */
 
-function editTask(id) {
+.hero {
 
-    const task =
-        tasks.find(
-            item =>
-                item.id === id
-        );
+    display: flex;
 
+    justify-content: space-between;
 
-    if (!task) return;
+    align-items: flex-end;
 
+    gap: 25px;
 
-    editingTaskId =
-        id;
+    margin-bottom: 34px;
 
-
-    selectedIcon =
-        task.icon ||
-        "🌸";
+}
 
 
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
-    );
+.eyebrow {
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    color: #c89aae;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+}
 
 
-    document.getElementById(
-        "modalTitle"
-    ).textContent =
-        "✏️ Edit task";
+h1 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        clamp(32px, 4vw, 47px);
+
+    font-weight: 600;
+
+    line-height: 1.1;
+
+    color: #463d44;
+
+}
 
 
-    document.getElementById(
-        "saveButton"
-    ).textContent =
-        "💾 Save Changes";
+h1 span {
+
+    color: var(--pink-dark);
+
+}
 
 
-    document.getElementById(
-        "taskName"
-    ).value =
-        task.name;
+.today {
+
+    font-size: 12px;
+
+    color: var(--muted);
+
+    margin-top: 10px;
+
+}
 
 
-    document.getElementById(
-        "taskDeadline"
-    ).value =
-        task.deadline ||
-        "";
+.primary-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background:
+        #e590ae;
+
+    color: white;
+
+    padding:
+        12px 18px;
+
+    border-radius: 13px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 8px 20px
+        rgba(217,125,157,.2);
+
+    transition:
+        .2s ease;
+
+}
 
 
-    document.getElementById(
-        "subtaskInputs"
-    ).innerHTML =
-        "";
+.primary-btn:hover {
 
+    transform:
+        translateY(-2px);
 
-    if (
-        task.subtasks &&
-        task.subtasks.length
-    ) {
-
-        task.subtasks.forEach(
-            sub => {
-
-                addSubtaskInput(
-                    sub.text,
-                    sub.completed
-                );
-
-            }
-        );
-
-    } else {
-
-        addSubtaskInput();
-
-    }
-
-
-    setSelectedIcon(
-        selectedIcon
-    );
+    box-shadow:
+        0 12px 25px
+        rgba(217,125,157,.25);
 
 }
 
 
 /* =================================
-   DELETE
+   STATS
 ================================= */
 
-function deleteTask(id) {
+.stats {
 
-    const answer =
-        confirm(
-            "ต้องการลบงานนี้ใช่ไหม?"
-        );
+    display: grid;
 
+    grid-template-columns:
+        repeat(4, 1fr);
 
-    if (!answer) return;
+    gap: 14px;
 
+    margin-bottom: 48px;
 
-    tasks =
-        tasks.filter(
-            task =>
-                task.id !== id
-        );
+}
 
 
-    saveData();
+.stat-card {
+
+    min-height: 105px;
+
+    border-radius: 19px;
+
+    padding: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border:
+        1px solid rgba(255,255,255,.8);
+
+}
 
 
-    render();
+.stat-pink {
+
+    background: #fff0f5;
+
+}
+
+
+.stat-lavender {
+
+    background: #f3effb;
+
+}
+
+
+.stat-yellow {
+
+    background: #fff8df;
+
+}
+
+
+.stat-green {
+
+    background: #edf7ef;
+
+}
+
+
+.stat-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.75);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+
+}
+
+
+.stat-label {
+
+    font-size: 10px;
+
+    color: #9b8e96;
+
+    margin-bottom: 4px;
+
+}
+
+
+.stat-number {
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+    color: #554951;
 
 }
 
 
 /* =================================
-   TOGGLE SUBTASK
+   SECTION HEADER
 ================================= */
 
-function toggleSubtask(
-    taskId,
-    subIndex
-) {
+.section-header {
 
-    const task =
-        tasks.find(
-            item =>
-                item.id === taskId
-        );
+    display: flex;
 
+    justify-content:
+        space-between;
 
-    if (!task) return;
+    align-items:
+        flex-end;
 
+    margin-bottom: 17px;
 
-    if (
-        !task.subtasks ||
-        !task.subtasks[subIndex]
-    ) {
-
-        return;
-
-    }
+}
 
 
-    task.subtasks[
-        subIndex
-    ].completed =
-        !task.subtasks[
-            subIndex
-        ].completed;
+.section-header h2 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 24px;
+
+    color: #51474f;
+
+}
 
 
-    saveData();
+.section-header p {
+
+    font-size: 11px;
+
+    color: #aaa0a7;
+
+    margin-top: 3px;
+
+}
 
 
-    render();
+.text-btn {
+
+    background: transparent;
+
+    color: var(--pink-dark);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.text-btn span {
+
+    margin-left: 5px;
 
 }
 
 
 /* =================================
-   SAVE DATA
+   TASK GRID
 ================================= */
 
-function saveData() {
+.task-grid {
 
-    try {
+    display: grid;
 
-        localStorage.setItem(
-            "bloomyTasks",
-            JSON.stringify(
-                tasks
-            )
-        );
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
 
-    } catch (error) {
+    gap: 16px;
 
-        console.error(
-            "Could not save data:",
-            error
-        );
+}
 
-    }
+
+.all-task-list {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0,1fr));
+
+    gap: 16px;
+
+}
+
+
+/* =================================
+   TASK CARD
+================================= */
+
+.task-card {
+
+    background:
+        rgba(255,255,255,.94);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 20px;
+
+    padding: 20px;
+
+    box-shadow:
+        var(--shadow);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.task-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 18px 45px
+        rgba(91,61,78,.09);
+
+}
+
+
+.task-top {
+
+    display: flex;
+
+    gap: 13px;
+
+    align-items: center;
+
+}
+
+
+.task-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    background:
+        #fff1f6;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+}
+
+
+.task-title {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: #51474f;
+
+    line-height: 1.3;
+
+}
+
+
+.deadline {
+
+    font-size: 10px;
+
+    color: #aaa0a7;
+
+    margin-top: 5px;
+
+}
+
+
+.deadline.soon {
+
+    color: #d87979;
+
+    font-weight: 600;
 
 }
 
@@ -784,604 +814,872 @@ function saveData() {
    PROGRESS
 ================================= */
 
-function getProgress(task) {
+.progress {
 
-    if (
-        !task.subtasks ||
-        task.subtasks.length === 0
-    ) {
+    height: 6px;
 
-        return 0;
+    background: #f4eef1;
 
-    }
+    border-radius: 20px;
 
+    margin-top: 19px;
 
-    const completed =
-        task.subtasks.filter(
-            sub =>
-                sub.completed
-        ).length;
+    overflow: hidden;
+
+}
 
 
-    return Math.round(
+.progress-bar {
 
-        (
-            completed /
-            task.subtasks.length
-        ) * 100
+    height: 100%;
 
-    );
+    width: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            #eca0bb,
+            #d985a5
+        );
+
+    border-radius: 20px;
+
+    transition:
+        width .3s ease;
+
+}
+
+
+.progress-row {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin-top: 7px;
+
+}
+
+
+.progress-text {
+
+    font-size: 9px;
+
+    color: #aaa0a7;
 
 }
 
 
 /* =================================
-   DAYS UNTIL
+   SUBTASK
 ================================= */
 
-function daysUntil(date) {
+.subtasks {
 
-    if (!date) {
+    margin-top: 12px;
 
-        return null;
-
-    }
+}
 
 
-    const today =
-        new Date();
+.subtask {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 5px 0;
+
+    font-size: 11px;
+
+    color: #6e646b;
+
+}
 
 
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
+.subtask input {
+
+    width: 14px;
+
+    height: 14px;
+
+    accent-color:
+        #dc8ba7;
+
+    cursor: pointer;
+
+}
 
 
-    const deadline =
-        new Date(
-            date +
-            "T00:00:00"
-        );
+.subtask.done span {
 
+    color: #b9b0b6;
 
-    return Math.ceil(
-
-        (
-            deadline -
-            today
-        ) /
-        86400000
-
-    );
+    text-decoration:
+        line-through;
 
 }
 
 
 /* =================================
-   FORMAT DATE
+   ACTIONS
 ================================= */
 
-function formatDate(date) {
+.task-actions {
 
-    if (!date) {
+    display: flex;
 
-        return "No deadline";
+    gap: 7px;
 
-    }
+    margin-top: 15px;
+
+    padding-top: 12px;
+
+    border-top:
+        1px solid #f6eef2;
+
+}
 
 
-    const d =
-        new Date(
-            date +
-            "T00:00:00"
-        );
+.edit-task,
+.delete-task {
+
+    padding:
+        7px 10px;
+
+    border-radius: 8px;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+}
 
 
-    return d.toLocaleDateString(
-        "en-GB",
-        {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        }
-    );
+.edit-task {
+
+    background: #fff7eb;
+
+    color: #ae8957;
+
+}
+
+
+.delete-task {
+
+    background: #fff1f1;
+
+    color: #c97c7c;
 
 }
 
 
 /* =================================
-   TASK HTML
+   EMPTY STATE
 ================================= */
 
-function taskHTML(task) {
+.empty-state {
 
-    const progress =
-        getProgress(
-            task
-        );
+    grid-column:
+        1 / -1;
 
+    padding:
+        55px 20px;
 
-    const days =
-        daysUntil(
-            task.deadline
-        );
+    text-align: center;
 
+    background:
+        rgba(255,255,255,.7);
 
-    let deadlineText =
-        formatDate(
-            task.deadline
-        );
+    border:
+        1px dashed #eadde4;
 
+    border-radius: 22px;
 
-    let soonClass =
-        "";
+}
 
 
-    if (
-        days !== null
-    ) {
+.empty-icon {
 
-        if (
-            days < 0
-        ) {
+    width: 62px;
 
-            deadlineText +=
-                " · Overdue";
+    height: 62px;
 
+    border-radius: 20px;
 
-            soonClass =
-                "soon";
+    background: #fff0f5;
 
-        }
+    display: flex;
 
+    align-items: center;
 
-        else if (
-            days === 0
-        ) {
+    justify-content: center;
 
-            deadlineText +=
-                " · Due today";
+    font-size: 30px;
 
+    margin:
+        0 auto 15px;
 
-            soonClass =
-                "soon";
+}
 
-        }
 
+.empty-state h3 {
 
-        else if (
-            days <= 3
-        ) {
+    font-family:
+        "Playfair Display",
+        serif;
 
-            deadlineText +=
-                ` · ${days} days left`;
+    font-size: 21px;
 
+    color: #655862;
 
-            soonClass =
-                "soon";
+}
 
-        }
 
-    }
+.empty-state p {
 
+    font-size: 11px;
 
-    let subtasksHTML =
-        "";
+    color: #aaa0a7;
 
-
-    if (
-        task.subtasks &&
-        task.subtasks.length
-    ) {
-
-        subtasksHTML =
-            task.subtasks
-                .map(
-                    (
-                        sub,
-                        index
-                    ) => {
-
-                        return `
-
-                        <div class="
-                            subtask
-                            ${
-                                sub.completed
-                                ? "done"
-                                : ""
-                            }
-                        ">
-
-                            <input
-                                type="checkbox"
-
-                                ${
-                                    sub.completed
-                                    ? "checked"
-                                    : ""
-                                }
-
-                                onchange="
-                                    toggleSubtask(
-                                        ${task.id},
-                                        ${index}
-                                    )
-                                "
-                            >
-
-                            <span>
-                                ${
-                                    escapeHTML(
-                                        sub.text
-                                    )
-                                }
-                            </span>
-
-                        </div>
-
-                        `;
-
-                    }
-                )
-                .join("");
-
-    }
-
-
-    else {
-
-        subtasksHTML = `
-
-            <div class="subtask">
-
-                ยังไม่มีงานย่อย
-
-            </div>
-
-        `;
-
-    }
-
-
-    return `
-
-        <div class="task-card">
-
-
-            <div class="task-top">
-
-
-                <div class="task-icon">
-
-                    ${
-                        task.icon ||
-                        "🌷"
-                    }
-
-                </div>
-
-
-                <div>
-
-                    <div class="task-title">
-
-                        ${
-                            escapeHTML(
-                                task.name
-                            )
-                        }
-
-                    </div>
-
-
-                    <div class="
-                        deadline
-                        ${soonClass}
-                    ">
-
-                        📅
-                        ${deadlineText}
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-
-            <div class="progress">
-
-                <div
-                    class="progress-bar"
-                    style="
-                        width:${progress}%
-                    "
-                ></div>
-
-            </div>
-
-
-            <div class="progress-text">
-
-                ${progress}% completed
-
-            </div>
-
-
-
-            <div class="subtasks">
-
-                ${subtasksHTML}
-
-            </div>
-
-
-
-            <div class="task-actions">
-
-
-                <button
-                    type="button"
-                    class="edit-task"
-                    onclick="
-                        editTask(
-                            ${task.id}
-                        )
-                    "
-                >
-
-                    ✏️ Edit
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="delete-task"
-                    onclick="
-                        deleteTask(
-                            ${task.id}
-                        )
-                    "
-                >
-
-                    🗑 Delete
-
-                </button>
-
-
-            </div>
-
-
-        </div>
-
-    `;
+    margin-top: 5px;
 
 }
 
 
 /* =================================
-   RENDER
+   MODAL
 ================================= */
 
-function render() {
+.modal {
 
-    const dashboard =
-        document.getElementById(
-            "dashboardTasks"
-        );
+    position: fixed;
 
+    inset: 0;
 
-    const allTasks =
-        document.getElementById(
-            "allTasks"
-        );
+    z-index: 1000;
 
+    display: flex;
 
-    if (
-        !dashboard ||
-        !allTasks
-    ) {
+    align-items: center;
 
-        return;
+    justify-content: center;
 
-    }
+    padding: 20px;
+
+}
 
 
-    const sorted =
-        [...tasks].sort(
-            (
-                a,
-                b
-            ) => {
+.modal-backdrop {
 
-                if (
-                    !a.deadline
-                ) {
+    position: absolute;
 
-                    return 1;
+    inset: 0;
 
-                }
+    background:
+        rgba(55,39,48,.32);
 
+    backdrop-filter:
+        blur(5px);
 
-                if (
-                    !b.deadline
-                ) {
-
-                    return -1;
-
-                }
+}
 
 
-                return (
+.modal-card {
 
-                    new Date(
-                        a.deadline
-                    ) -
+    position: relative;
 
-                    new Date(
-                        b.deadline
-                    )
+    z-index: 2;
 
-                );
+    width: 100%;
 
-            }
-        );
+    max-width: 530px;
 
+    max-height: 92vh;
 
-    dashboard.innerHTML =
-        sorted
-            .slice(0,6)
-            .map(
-                taskHTML
-            )
-            .join("");
+    overflow-y: auto;
 
+    background: white;
 
-    allTasks.innerHTML =
-        sorted
-            .map(
-                taskHTML
-            )
-            .join("");
+    border-radius: 25px;
+
+    padding: 29px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(60,40,50,.2);
+
+}
 
 
-    updateSummary();
+.modal-close {
+
+    position: absolute;
+
+    right: 19px;
+
+    top: 17px;
+
+    width: 31px;
+
+    height: 31px;
+
+    border-radius: 50%;
+
+    background: #f8f3f5;
+
+    color: #9e9098;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+}
+
+
+.modal-heading {
+
+    display: flex;
+
+    gap: 13px;
+
+    align-items: center;
+
+    margin-bottom: 26px;
+
+}
+
+
+.modal-flower {
+
+    width: 47px;
+
+    height: 47px;
+
+    border-radius: 15px;
+
+    background: #fff0f5;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 24px;
+
+}
+
+
+.modal-heading h2 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 24px;
+
+    color: #51464e;
+
+}
+
+
+.modal-heading p {
+
+    color: #aaa0a7;
+
+    font-size: 10px;
+
+    margin-top: 3px;
 
 }
 
 
 /* =================================
-   SUMMARY
+   FORM
 ================================= */
 
-function updateSummary() {
+.field {
 
-    const total =
-        tasks.length;
+    margin-bottom: 19px;
 
-
-    const completed =
-        tasks.filter(
-            task =>
-                getProgress(task)
-                === 100
-        ).length;
+}
 
 
-    const progress =
-        total -
-        completed;
+.field label {
+
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #665a63;
+
+    margin-bottom: 8px;
+
+}
 
 
-    const dueSoon =
-        tasks.filter(
-            task => {
+.field input[type="text"],
+.field input[type="date"] {
 
-                const days =
-                    daysUntil(
-                        task.deadline
-                    );
+    width: 100%;
+
+    height: 43px;
+
+    padding:
+        0 13px;
+
+    border:
+        1px solid #eadfe5;
+
+    border-radius: 11px;
+
+    background: #fff;
+
+    color: #51474f;
+
+    font-size: 11px;
+
+    outline: none;
+
+    transition:
+        border .2s,
+        box-shadow .2s;
+
+}
 
 
-                return (
+.field input:focus {
 
-                    days !== null &&
+    border-color:
+        #e8a0b9;
 
-                    days >= 0 &&
+    box-shadow:
+        0 0 0 3px #fff0f5;
 
-                    days <= 3 &&
-
-                    getProgress(
-                        task
-                    ) < 100
-
-                );
-
-            }
-        ).length;
+}
 
 
-    const totalElement =
-        document.getElementById(
-            "totalTasks"
+.label-row {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+}
+
+
+.label-row span {
+
+    font-size: 9px;
+
+    color: #b8abb2;
+
+}
+
+
+/* =================================
+   ICON PICKER
+================================= */
+
+.icon-picker {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(10, 1fr);
+
+    gap: 7px;
+
+}
+
+
+.icon-option {
+
+    aspect-ratio: 1;
+
+    min-width: 0;
+
+    border-radius: 11px;
+
+    background: #fcf7fa;
+
+    border:
+        1px solid #eee3e8;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+
+    transition:
+        .15s ease;
+
+}
+
+
+.icon-option:hover {
+
+    background: #fff0f5;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.icon-option.selected {
+
+    background: #ffe2ec;
+
+    border:
+        2px solid #e28ba8;
+
+    box-shadow:
+        0 4px 10px
+        rgba(226,139,168,.16);
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =================================
+   SUBTASK INPUTS
+================================= */
+
+.subtask-input-row {
+
+    display: flex;
+
+    gap: 7px;
+
+    margin-bottom: 7px;
+
+}
+
+
+.subtask-input-row input {
+
+    flex: 1;
+
+}
+
+
+.remove-subtask {
+
+    width: 42px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #fff1f1;
+
+    color: #cf7c7c;
+
+}
+
+
+.add-subtask-btn {
+
+    width: 100%;
+
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: #fff7fa;
+
+    color: #d5829f;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    border:
+        1px dashed #efc9d7;
+
+}
+
+
+.add-subtask-btn:hover {
+
+    background: #fff0f5;
+
+}
+
+
+/* =================================
+   CREATE BUTTON
+================================= */
+
+.create-btn {
+
+    width: 100%;
+
+    height: 46px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eca1ba,
+            #dc86a5
         );
 
+    color: white;
 
-    const progressElement =
-        document.getElementById(
-            "progressTasks"
-        );
+    font-size: 11px;
 
+    font-weight: 700;
 
-    const dueElement =
-        document.getElementById(
-            "dueTasks"
-        );
+    box-shadow:
+        0 9px 20px
+        rgba(220,134,165,.2);
 
+    transition:
+        .2s ease;
 
-    const completedElement =
-        document.getElementById(
-            "completedTasks"
-        );
+}
 
 
-    if (totalElement) {
+.create-btn span {
 
-        totalElement.textContent =
-            total;
+    margin-left: 6px;
+
+}
+
+
+.create-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 13px 25px
+        rgba(220,134,165,.28);
+
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 950px) {
+
+    .sidebar {
+
+        width: 205px;
 
     }
 
 
-    if (progressElement) {
+    .stats {
 
-        progressElement.textContent =
-            progress;
-
-    }
-
-
-    if (dueElement) {
-
-        dueElement.textContent =
-            dueSoon;
+        grid-template-columns:
+            repeat(2, 1fr);
 
     }
 
 
-    if (completedElement) {
+    .task-grid,
+    .all-task-list {
 
-        completedElement.textContent =
-            completed;
+        grid-template-columns:
+            1fr;
 
     }
 
 }
 
 
-/* =================================
-   ESCAPE HTML
-================================= */
+@media (max-width: 700px) {
 
-function escapeHTML(text) {
+    .sidebar {
 
-    const div =
-        document.createElement(
-            "div"
-        );
+        width: 68px;
 
+        padding:
+            22px 9px;
 
-    div.textContent =
-        text;
+    }
 
 
-    return div.innerHTML;
+    .brand {
+
+        justify-content: center;
+
+        padding: 0;
+
+    }
+
+
+    .brand > div:not(.brand-mark) {
+
+        display: none;
+
+    }
+
+
+    .menu-label {
+
+        display: none;
+
+    }
+
+
+    .nav-item {
+
+        justify-content: center;
+
+        padding: 12px 5px;
+
+    }
+
+
+    .nav-item span:last-child {
+
+        display: none;
+
+    }
+
+
+    .sidebar-note {
+
+        display: none;
+
+    }
+
+
+    .main {
+
+        padding:
+            30px 18px;
+
+    }
+
+
+    .hero {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .primary-btn {
+
+        align-self:
+            flex-start;
+
+    }
+
+
+    h1 {
+
+        font-size: 34px;
+
+    }
+
+
+    .stats {
+
+        gap: 9px;
+
+    }
+
+
+    .stat-card {
+
+        padding: 14px;
+
+        min-height: 90px;
+
+    }
+
+
+    .stat-icon {
+
+        width: 36px;
+
+        height: 36px;
+
+        font-size: 17px;
+
+    }
+
+
+    .stat-number {
+
+        font-size: 22px;
+
+    }
+
+
+    .icon-picker {
+
+        grid-template-columns:
+            repeat(5, 1fr);
+
+    }
+
+
+    .modal-card {
+
+        padding: 23px;
+
+        border-radius: 21px;
+
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .stats {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .stat-card {
+
+        gap: 9px;
+
+    }
+
+
+    .stat-label {
+
+        font-size: 9px;
+
+    }
+
+
+    .stat-number {
+
+        font-size: 20px;
+
+    }
 
 }
