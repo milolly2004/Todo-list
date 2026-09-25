@@ -1,41 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My To-Do List</title>
+
+    <title>Bloomy Planner 🌷</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="container">
+<div class="app">
 
-        <h1>✨ My To-Do List</h1>
-        <p class="subtitle">Stay organized and get things done!</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-        <div class="input-area">
-            <input 
-                type="text" 
-                id="taskInput" 
-                placeholder="What do you need to do?"
-            >
-            <button onclick="addTask()">Add</button>
+        <div class="logo">
+            🌷
+            <div>
+                <strong>Bloomy</strong>
+                <span>My Planner</span>
+            </div>
         </div>
 
-        <div class="task-info">
-            <span id="taskCount">0 tasks left</span>
+        <nav>
+            <button class="nav-btn active" onclick="showPage('dashboard')">
+                🏡 Dashboard
+            </button>
+
+            <button class="nav-btn" onclick="showPage('tasks')">
+                🌸 My Tasks
+            </button>
+        </nav>
+
+        <div class="side-bottom">
+            <p>🌼 Little steps<br>make big things bloom.</p>
         </div>
 
-        <ul id="taskList"></ul>
+    </aside>
 
-        <button class="clear-btn" onclick="clearCompleted()">
-            Clear Completed
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- DASHBOARD -->
+        <section id="dashboardPage" class="page">
+
+            <div class="top">
+                <div>
+                    <p class="small">Good evening 🌷</p>
+                    <h1>Let's make things bloom!</h1>
+                    <p class="date" id="today"></p>
+                </div>
+
+                <button class="add-main" onclick="openModal()">
+                    ＋ New Task
+                </button>
+            </div>
+
+
+            <!-- SUMMARY -->
+            <div class="summary">
+
+                <div class="summary-card pink">
+                    <span>🌷</span>
+                    <div>
+                        <p>Total Tasks</p>
+                        <strong id="totalTasks">0</strong>
+                    </div>
+                </div>
+
+                <div class="summary-card purple">
+                    <span>💜</span>
+                    <div>
+                        <p>In Progress</p>
+                        <strong id="progressTasks">0</strong>
+                    </div>
+                </div>
+
+                <div class="summary-card yellow">
+                    <span>🌼</span>
+                    <div>
+                        <p>Due Soon</p>
+                        <strong id="dueTasks">0</strong>
+                    </div>
+                </div>
+
+                <div class="summary-card green">
+                    <span>🌿</span>
+                    <div>
+                        <p>Completed</p>
+                        <strong id="completedTasks">0</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- UPCOMING -->
+            <div class="section-title">
+                <div>
+                    <h2>Upcoming Tasks 🌸</h2>
+                    <p>สิ่งที่ต้องทำเร็ว ๆ นี้</p>
+                </div>
+
+                <button onclick="showPage('tasks')">
+                    View all →
+                </button>
+            </div>
+
+            <div id="dashboardTasks" class="task-grid"></div>
+
+        </section>
+
+
+        <!-- TASK PAGE -->
+        <section id="tasksPage" class="page hidden">
+
+            <div class="top">
+                <div>
+                    <p class="small">My work 🌷</p>
+                    <h1>All Tasks</h1>
+                    <p class="date">จัดการงานและ deadline ของคุณ</p>
+                </div>
+
+                <button class="add-main" onclick="openModal()">
+                    ＋ New Task
+                </button>
+            </div>
+
+            <div id="allTasks" class="task-list"></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ADD TASK MODAL -->
+<div id="modal" class="modal hidden">
+
+    <div class="modal-box">
+
+        <button class="close" onclick="closeModal()">×</button>
+
+        <h2>🌷 Create a new task</h2>
+        <p>เพิ่มงานที่ต้องทำ</p>
+
+        <label>ชื่องาน</label>
+        <input
+            id="taskName"
+            type="text"
+            placeholder="เช่น งานวิจัย"
+        >
+
+        <label>หมวดหมู่</label>
+
+        <select id="taskCategory">
+
+            <option value="research">🌸 วิจัย</option>
+            <option value="university">💜 มหาวิทยาลัย</option>
+            <option value="teaching">🌼 งานสอน</option>
+            <option value="personal">🌿 ส่วนตัว</option>
+            <option value="other">🩵 อื่น ๆ</option>
+
+        </select>
+
+        <label>Deadline</label>
+
+        <input
+            id="taskDeadline"
+            type="date"
+        >
+
+        <label>งานย่อย</label>
+
+        <div id="subtaskInputs"></div>
+
+        <button
+            class="add-sub"
+            onclick="addSubtaskInput()"
+        >
+            ＋ เพิ่มงานย่อย
+        </button>
+
+        <button
+            class="save-btn"
+            onclick="createTask()"
+        >
+            🌷 Create Task
         </button>
 
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+
+<script src="script.js"></script>
 
 </body>
 </html>
