@@ -1,29 +1,52 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Bloomy Planner 🌷</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
 <div class="app">
 
+
     <!-- SIDEBAR -->
+
     <aside class="sidebar">
 
         <div class="logo">
-            <span>🌷</span>
+
+            <div class="logo-flower">
+                🌷
+            </div>
 
             <div>
+
                 <strong>Bloomy</strong>
-                <small>My Planner</small>
+
+                <small>
+                    My Planner
+                </small>
+
             </div>
+
         </div>
+
 
         <nav>
 
@@ -34,6 +57,7 @@
                 🏡 Dashboard
             </button>
 
+
             <button
                 class="nav-btn"
                 onclick="showPage('tasks')"
@@ -43,101 +67,187 @@
 
         </nav>
 
+
         <div class="side-bottom">
+
             🌼 Little steps<br>
+
             make big things bloom.
+
         </div>
 
     </aside>
 
 
+
     <!-- MAIN -->
+
     <main class="main">
+
 
         <!-- DASHBOARD -->
 
-        <section id="dashboardPage" class="page">
+        <section
+            id="dashboardPage"
+            class="page"
+        >
 
             <div class="top">
 
-                <div>
-                    <p class="small">Good evening 🌷</p>
 
-                    <h1>Let's make things bloom!</h1>
+                <div>
+
+                    <p class="small">
+                        Good evening 🌷
+                    </p>
+
+
+                    <h1>
+                        Let's make things bloom!
+                    </h1>
+
 
                     <p
                         class="date"
                         id="today"
                     ></p>
+
                 </div>
+
 
 
                 <button
                     class="add-main"
-                    onclick="openModal()"
+                    onclick="openCreateModal()"
                 >
+
                     ＋ New Task
+
                 </button>
 
             </div>
+
 
 
             <!-- SUMMARY -->
 
             <div class="summary">
 
+
                 <div class="summary-card pink">
-                    <span>🌷</span>
+
+                    <span>
+                        🌷
+                    </span>
 
                     <div>
-                        <p>Total Tasks</p>
-                        <strong id="totalTasks">0</strong>
+
+                        <p>
+                            Total Tasks
+                        </p>
+
+                        <strong
+                            id="totalTasks"
+                        >
+                            0
+                        </strong>
+
                     </div>
+
                 </div>
+
 
 
                 <div class="summary-card purple">
-                    <span>💜</span>
+
+                    <span>
+                        💜
+                    </span>
 
                     <div>
-                        <p>In Progress</p>
-                        <strong id="progressTasks">0</strong>
+
+                        <p>
+                            In Progress
+                        </p>
+
+                        <strong
+                            id="progressTasks"
+                        >
+                            0
+                        </strong>
+
                     </div>
+
                 </div>
+
 
 
                 <div class="summary-card yellow">
-                    <span>🌼</span>
+
+                    <span>
+                        🌼
+                    </span>
 
                     <div>
-                        <p>Due Soon</p>
-                        <strong id="dueTasks">0</strong>
+
+                        <p>
+                            Due Soon
+                        </p>
+
+                        <strong
+                            id="dueTasks"
+                        >
+                            0
+                        </strong>
+
                     </div>
+
                 </div>
+
 
 
                 <div class="summary-card green">
-                    <span>🌿</span>
+
+                    <span>
+                        🌿
+                    </span>
 
                     <div>
-                        <p>Completed</p>
-                        <strong id="completedTasks">0</strong>
+
+                        <p>
+                            Completed
+                        </p>
+
+                        <strong
+                            id="completedTasks"
+                        >
+                            0
+                        </strong>
+
                     </div>
+
                 </div>
 
+
             </div>
+
 
 
             <!-- UPCOMING -->
 
             <div class="section-title">
 
+
                 <div>
-                    <h2>Upcoming Tasks 🌸</h2>
+
+                    <h2>
+                        Upcoming Tasks 🌸
+                    </h2>
 
                     <p>
                         สิ่งที่ต้องทำเร็ว ๆ นี้
                     </p>
+
                 </div>
 
 
@@ -155,7 +265,9 @@
                 class="task-grid"
             ></div>
 
+
         </section>
+
 
 
         <!-- ALL TASKS -->
@@ -165,7 +277,9 @@
             class="page hidden"
         >
 
+
             <div class="top">
+
 
                 <div>
 
@@ -173,7 +287,11 @@
                         My work 🌷
                     </p>
 
-                    <h1>All Tasks</h1>
+
+                    <h1>
+                        All Tasks
+                    </h1>
+
 
                     <p class="date">
                         จัดการงานและ deadline ของคุณ
@@ -182,12 +300,16 @@
                 </div>
 
 
+
                 <button
                     class="add-main"
-                    onclick="openModal()"
+                    onclick="openCreateModal()"
                 >
+
                     ＋ New Task
+
                 </button>
+
 
             </div>
 
@@ -197,21 +319,28 @@
                 class="task-list"
             ></div>
 
+
         </section>
+
 
     </main>
 
 </div>
 
 
-<!-- MODAL -->
+
+<!-- =========================
+     MODAL
+========================= -->
 
 <div
     id="modal"
     class="modal hidden"
 >
 
+
     <div class="modal-box">
+
 
         <button
             class="close"
@@ -221,20 +350,24 @@
         </button>
 
 
+
         <h2 id="modalTitle">
             🌷 Create a new task
         </h2>
+
 
         <p>
             เพิ่มงานที่ต้องทำ
         </p>
 
 
-        <!-- TASK NAME -->
+
+        <!-- NAME -->
 
         <label>
             ชื่องาน
         </label>
+
 
         <input
             id="taskName"
@@ -243,16 +376,200 @@
         >
 
 
+
         <!-- ICON -->
 
         <label>
             เลือกไอคอน
         </label>
 
+
         <div
             id="iconPicker"
             class="icon-picker"
-        ></div>
+        >
+
+            <button
+                type="button"
+                class="icon-option selected"
+                data-icon="🌸"
+            >
+                🌸
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌷"
+            >
+                🌷
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌼"
+            >
+                🌼
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌻"
+            >
+                🌻
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🪻"
+            >
+                🪻
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌹"
+            >
+                🌹
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌺"
+            >
+                🌺
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🌿"
+            >
+                🌿
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🍀"
+            >
+                🍀
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🍃"
+            >
+                🍃
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="📚"
+            >
+                📚
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="📝"
+            >
+                📝
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="💻"
+            >
+                💻
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="📊"
+            >
+                📊
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🎓"
+            >
+                🎓
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="💡"
+            >
+                💡
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🧪"
+            >
+                🧪
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="📖"
+            >
+                📖
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="⭐"
+            >
+                ⭐
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-option"
+                data-icon="🐝"
+            >
+                🐝
+            </button>
+
+        </div>
+
 
 
         <!-- DEADLINE -->
@@ -261,10 +578,12 @@
             Deadline
         </label>
 
+
         <input
             id="taskDeadline"
             type="date"
         >
+
 
 
         <!-- SUBTASK -->
@@ -273,33 +592,46 @@
             งานย่อย
         </label>
 
+
         <div
             id="subtaskInputs"
         ></div>
 
 
         <button
+            type="button"
             class="add-sub"
             onclick="addSubtaskInput()"
         >
+
             ＋ เพิ่มงานย่อย
+
         </button>
 
 
+
+        <!-- SAVE -->
+
         <button
+            type="button"
             id="saveButton"
             class="save-btn"
             onclick="saveTask()"
         >
+
             🌷 Create Task
+
         </button>
+
 
     </div>
 
 </div>
 
 
+
 <script src="script.js"></script>
 
 </body>
+
 </html>
