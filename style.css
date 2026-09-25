@@ -1,1027 +1,1387 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+/* =================================
+   BLOOMY PLANNER
+================================= */
 
 
-body {
+/* =================================
+   DATA
+================================= */
 
-    font-family:
-        "Segoe UI",
-        Arial,
-        sans-serif;
+let tasks = [];
 
-    background: #fff9fc;
+try {
 
-    color: #4d4550;
+    tasks =
+        JSON.parse(
+            localStorage.getItem(
+                "bloomyTasks"
+            )
+        ) || [];
 
-}
+} catch (error) {
 
-
-button {
-
-    font-family: inherit;
-
-    cursor: pointer;
-
-    border: none;
+    tasks = [];
 
 }
 
 
-.app {
+let editingTaskId = null;
 
-    min-height: 100vh;
-
-    display: flex;
-
-}
+let selectedIcon = "🌸";
 
 
-/* =========================
-   SIDEBAR
-========================= */
+/* =================================
+   START
+================================= */
 
-.sidebar {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    width: 240px;
+        setupIcons();
 
-    background: white;
+        updateToday();
 
-    border-right:
-        1px solid #f2e5ec;
+        render();
 
-    padding: 30px 20px;
-
-    display: flex;
-
-    flex-direction: column;
-
-}
+    }
+);
 
 
-.logo {
+/* =================================
+   ICONS
+================================= */
 
-    display: flex;
+function setupIcons() {
 
-    align-items: center;
-
-    gap: 12px;
-
-    margin-bottom: 45px;
-
-}
-
-
-.logo-flower {
-
-    font-size: 35px;
-
-}
+    const buttons =
+        document.querySelectorAll(
+            ".icon-option"
+        );
 
 
-.logo strong {
+    buttons.forEach(button => {
 
-    display: block;
+        button.addEventListener(
+            "click",
+            function () {
 
-    font-size: 21px;
-
-    color: #8d6678;
-
-}
+                selectedIcon =
+                    this.dataset.icon;
 
 
-.logo small {
+                buttons.forEach(btn => {
 
-    display: block;
+                    btn.classList.remove(
+                        "selected"
+                    );
 
-    font-size: 12px;
+                });
 
-    color: #aaa;
+
+                this.classList.add(
+                    "selected"
+                );
+
+            }
+        );
+
+    });
 
 }
 
 
-nav {
+/* =================================
+   TODAY
+================================= */
 
-    display: flex;
+function updateToday() {
 
-    flex-direction: column;
-
-    gap: 8px;
-
-}
-
-
-.nav-btn {
-
-    background: transparent;
-
-    padding: 13px 15px;
-
-    border-radius: 12px;
-
-    text-align: left;
-
-    color: #817580;
-
-    font-size: 14px;
-
-}
+    const today =
+        document.getElementById(
+            "today"
+        );
 
 
-.nav-btn:hover,
-.nav-btn.active {
+    if (!today) return;
 
-    background: #fff0f5;
 
-    color: #d56f95;
+    today.textContent =
+        new Date().toLocaleDateString(
+            "en-GB",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
 
 }
 
 
-.side-bottom {
+/* =================================
+   PAGE
+================================= */
 
-    margin-top: auto;
+function showPage(page) {
 
-    background: #fff7e8;
-
-    padding: 15px;
-
-    border-radius: 15px;
-
-    color: #a28b69;
-
-    font-size: 12px;
-
-    line-height: 1.7;
-
-}
+    const dashboard =
+        document.getElementById(
+            "dashboardPage"
+        );
 
 
-/* =========================
-   MAIN
-========================= */
-
-.main {
-
-    flex: 1;
-
-    padding: 40px 5%;
-
-    max-width: 1400px;
-
-}
+    const tasksPage =
+        document.getElementById(
+            "tasksPage"
+        );
 
 
-.page {
+    if (!dashboard || !tasksPage) {
 
-    animation:
-        fade .25s ease;
-
-}
-
-
-.hidden {
-
-    display: none !important;
-
-}
-
-
-@keyframes fade {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(5px);
+        return;
 
     }
 
-    to {
 
-        opacity: 1;
+    dashboard.classList.toggle(
+        "hidden",
+        page !== "dashboard"
+    );
 
-        transform:
-            translateY(0);
+
+    tasksPage.classList.toggle(
+        "hidden",
+        page !== "tasks"
+    );
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".nav-btn"
+        );
+
+
+    buttons.forEach(button => {
+
+        button.classList.remove(
+            "active"
+        );
+
+    });
+
+
+    if (page === "dashboard") {
+
+        if (buttons[0]) {
+
+            buttons[0].classList.add(
+                "active"
+            );
+
+        }
+
+    } else {
+
+        if (buttons[1]) {
+
+            buttons[1].classList.add(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    render();
+
+}
+
+
+/* =================================
+   OPEN CREATE MODAL
+================================= */
+
+function openCreateModal() {
+
+    editingTaskId = null;
+
+    selectedIcon = "🌸";
+
+
+    const modal =
+        document.getElementById(
+            "modal"
+        );
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "🌷 Create a new task";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "🌷 Create Task";
+
+
+    document.getElementById(
+        "taskName"
+    ).value = "";
+
+
+    document.getElementById(
+        "taskDeadline"
+    ).value = "";
+
+
+    document.getElementById(
+        "subtaskInputs"
+    ).innerHTML = "";
+
+
+    addSubtaskInput();
+
+
+    setSelectedIcon(
+        "🌸"
+    );
+
+}
+
+
+/* =================================
+   CLOSE MODAL
+================================= */
+
+function closeModal() {
+
+    document.getElementById(
+        "modal"
+    ).classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =================================
+   SELECT ICON
+================================= */
+
+function setSelectedIcon(icon) {
+
+    selectedIcon = icon;
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".icon-option"
+        );
+
+
+    buttons.forEach(button => {
+
+        if (
+            button.dataset.icon ===
+            icon
+        ) {
+
+            button.classList.add(
+                "selected"
+            );
+
+        } else {
+
+            button.classList.remove(
+                "selected"
+            );
+
+        }
+
+    });
+
+}
+
+
+/* =================================
+   ADD SUBTASK INPUT
+================================= */
+
+function addSubtaskInput(
+    value = "",
+    completed = false
+) {
+
+    const container =
+        document.getElementById(
+            "subtaskInputs"
+        );
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.style.display =
+        "flex";
+
+
+    wrapper.style.gap =
+        "8px";
+
+
+    wrapper.style.marginTop =
+        "8px";
+
+
+    const input =
+        document.createElement(
+            "input"
+        );
+
+
+    input.type = "text";
+
+    input.className =
+        "new-subtask";
+
+
+    input.placeholder =
+        "เช่น เล่มวิจัย";
+
+
+    input.value =
+        value;
+
+
+    input.dataset.completed =
+        completed;
+
+
+    input.style.flex = "1";
+
+    input.style.marginTop = "0";
+
+
+    const removeButton =
+        document.createElement(
+            "button"
+        );
+
+
+    removeButton.type =
+        "button";
+
+
+    removeButton.textContent =
+        "×";
+
+
+    removeButton.style.width =
+        "40px";
+
+
+    removeButton.style.borderRadius =
+        "10px";
+
+
+    removeButton.style.background =
+        "#fff0f0";
+
+
+    removeButton.style.color =
+        "#d97b7b";
+
+
+    removeButton.addEventListener(
+        "click",
+        function () {
+
+            wrapper.remove();
+
+        }
+    );
+
+
+    wrapper.appendChild(
+        input
+    );
+
+
+    wrapper.appendChild(
+        removeButton
+    );
+
+
+    container.appendChild(
+        wrapper
+    );
+
+}
+
+
+/* =================================
+   SAVE TASK
+================================= */
+
+function saveTask() {
+
+    const nameInput =
+        document.getElementById(
+            "taskName"
+        );
+
+
+    const deadlineInput =
+        document.getElementById(
+            "taskDeadline"
+        );
+
+
+    const name =
+        nameInput.value.trim();
+
+
+    const deadline =
+        deadlineInput.value;
+
+
+    if (!name) {
+
+        alert(
+            "กรุณาใส่ชื่องานก่อนนะ 🌷"
+        );
+
+        nameInput.focus();
+
+        return;
+
+    }
+
+
+    const inputElements =
+        document.querySelectorAll(
+            ".new-subtask"
+        );
+
+
+    const subtasks = [];
+
+
+    inputElements.forEach(input => {
+
+        const text =
+            input.value.trim();
+
+
+        if (text !== "") {
+
+            subtasks.push({
+
+                text: text,
+
+                completed:
+                    input.dataset.completed
+                    === "true"
+
+            });
+
+        }
+
+    });
+
+
+    /* =============================
+       EDIT
+    ============================= */
+
+    if (
+        editingTaskId !== null
+    ) {
+
+        const task =
+            tasks.find(
+                item =>
+                    item.id ===
+                    editingTaskId
+            );
+
+
+        if (task) {
+
+            task.name =
+                name;
+
+
+            task.icon =
+                selectedIcon;
+
+
+            task.deadline =
+                deadline;
+
+
+            task.subtasks =
+                subtasks;
+
+        }
+
+    }
+
+
+    /* =============================
+       CREATE
+    ============================= */
+
+    else {
+
+        const newTask = {
+
+            id:
+                Date.now(),
+
+            name:
+                name,
+
+            icon:
+                selectedIcon,
+
+            deadline:
+                deadline,
+
+            subtasks:
+                subtasks
+
+        };
+
+
+        tasks.push(
+            newTask
+        );
+
+    }
+
+
+    saveData();
+
+
+    closeModal();
+
+
+    render();
+
+}
+
+
+/* =================================
+   EDIT TASK
+================================= */
+
+function editTask(id) {
+
+    const task =
+        tasks.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!task) return;
+
+
+    editingTaskId =
+        id;
+
+
+    selectedIcon =
+        task.icon ||
+        "🌸";
+
+
+    document.getElementById(
+        "modal"
+    ).classList.remove(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "✏️ Edit task";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "💾 Save Changes";
+
+
+    document.getElementById(
+        "taskName"
+    ).value =
+        task.name;
+
+
+    document.getElementById(
+        "taskDeadline"
+    ).value =
+        task.deadline ||
+        "";
+
+
+    document.getElementById(
+        "subtaskInputs"
+    ).innerHTML =
+        "";
+
+
+    if (
+        task.subtasks &&
+        task.subtasks.length
+    ) {
+
+        task.subtasks.forEach(
+            sub => {
+
+                addSubtaskInput(
+                    sub.text,
+                    sub.completed
+                );
+
+            }
+        );
+
+    } else {
+
+        addSubtaskInput();
+
+    }
+
+
+    setSelectedIcon(
+        selectedIcon
+    );
+
+}
+
+
+/* =================================
+   DELETE
+================================= */
+
+function deleteTask(id) {
+
+    const answer =
+        confirm(
+            "ต้องการลบงานนี้ใช่ไหม?"
+        );
+
+
+    if (!answer) return;
+
+
+    tasks =
+        tasks.filter(
+            task =>
+                task.id !== id
+        );
+
+
+    saveData();
+
+
+    render();
+
+}
+
+
+/* =================================
+   TOGGLE SUBTASK
+================================= */
+
+function toggleSubtask(
+    taskId,
+    subIndex
+) {
+
+    const task =
+        tasks.find(
+            item =>
+                item.id === taskId
+        );
+
+
+    if (!task) return;
+
+
+    if (
+        !task.subtasks ||
+        !task.subtasks[subIndex]
+    ) {
+
+        return;
+
+    }
+
+
+    task.subtasks[
+        subIndex
+    ].completed =
+        !task.subtasks[
+            subIndex
+        ].completed;
+
+
+    saveData();
+
+
+    render();
+
+}
+
+
+/* =================================
+   SAVE DATA
+================================= */
+
+function saveData() {
+
+    try {
+
+        localStorage.setItem(
+            "bloomyTasks",
+            JSON.stringify(
+                tasks
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not save data:",
+            error
+        );
 
     }
 
 }
 
 
-.top {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items: center;
-
-    margin-bottom: 35px;
-
-}
-
-
-.small {
-
-    color: #d98aa6;
-
-    font-size: 13px;
-
-    margin-bottom: 5px;
-
-}
-
-
-h1 {
-
-    font-size: 30px;
-
-    color: #51464f;
-
-}
-
-
-.date {
-
-    color: #aaa;
-
-    font-size: 13px;
-
-    margin-top: 6px;
-
-}
-
-
-.add-main {
-
-    background: #e990ad;
-
-    color: white;
-
-    padding:
-        13px 20px;
-
-    border-radius: 12px;
-
-    box-shadow:
-        0 5px 15px
-        rgba(217,128,159,.2);
-
-}
-
-
-.add-main:hover {
-
-    transform:
-        translateY(-2px);
-
-}
-
-
-/* =========================
-   SUMMARY
-========================= */
-
-.summary {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 15px;
-
-    margin-bottom: 45px;
-
-}
-
-
-.summary-card {
-
-    padding: 20px;
-
-    border-radius: 17px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.summary-card > span {
-
-    font-size: 28px;
-
-}
-
-
-.summary-card p {
-
-    font-size: 12px;
-
-    margin-bottom: 4px;
-
-    opacity: .75;
-
-}
-
-
-.summary-card strong {
-
-    font-size: 25px;
-
-}
-
-
-.pink {
-
-    background: #fff0f5;
-
-    color: #c9688c;
-
-}
-
-
-.purple {
-
-    background: #f4efff;
-
-    color: #8069ad;
-
-}
-
-
-.yellow {
-
-    background: #fff8df;
-
-    color: #aa8b42;
-
-}
-
-
-.green {
-
-    background: #edf8ef;
-
-    color: #68936d;
-
-}
-
-
-/* =========================
-   SECTION
-========================= */
-
-.section-title {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items: center;
-
-    margin-bottom: 18px;
-
-}
-
-
-.section-title h2 {
-
-    font-size: 20px;
-
-}
-
-
-.section-title p {
-
-    color: #aaa;
-
-    font-size: 12px;
-
-    margin-top: 3px;
-
-}
-
-
-.section-title button {
-
-    background: transparent;
-
-    color: #d47798;
-
-}
-
-
-/* =========================
-   TASK
-========================= */
-
-.task-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap: 18px;
-
-}
-
-
-.task-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 18px;
-
-}
-
-
-.task-card {
-
-    background: white;
-
-    border:
-        1px solid #f1e7ec;
-
-    border-radius: 20px;
-
-    padding: 22px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(80,50,70,.04);
-
-    transition: .2s;
-
-}
-
-
-.task-card:hover {
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 8px 25px
-        rgba(80,50,70,.08);
-
-}
-
-
-.task-top {
-
-    display: flex;
-
-    align-items:
-        flex-start;
-
-    gap: 14px;
-
-}
-
-
-.task-icon {
-
-    width: 48px;
-
-    height: 48px;
-
-    background: #fff2f6;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 27px;
-
-    flex-shrink: 0;
-
-}
-
-
-.task-title {
-
-    font-size: 18px;
-
-    font-weight: 600;
-
-    color: #51464f;
-
-}
-
-
-.deadline {
-
-    color: #999;
-
-    font-size: 12px;
-
-    margin-top: 7px;
-
-}
-
-
-.deadline.soon {
-
-    color: #d86e6e;
-
-    font-weight: 600;
-
-}
-
-
-/* =========================
+/* =================================
    PROGRESS
-========================= */
+================================= */
 
-.progress {
+function getProgress(task) {
 
-    height: 6px;
+    if (
+        !task.subtasks ||
+        task.subtasks.length === 0
+    ) {
 
-    background: #f1edf0;
-
-    border-radius: 10px;
-
-    margin:
-        17px 0 7px;
-
-    overflow: hidden;
-
-}
-
-
-.progress-bar {
-
-    height: 100%;
-
-    background: #e990ad;
-
-    border-radius: 10px;
-
-    transition: width .3s;
-
-}
-
-
-.progress-text {
-
-    font-size: 11px;
-
-    color: #aaa;
-
-}
-
-
-/* =========================
-   SUBTASK
-========================= */
-
-.subtasks {
-
-    margin-top: 13px;
-
-}
-
-
-.subtask {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 8px 0;
-
-    font-size: 13px;
-
-}
-
-
-.subtask input {
-
-    accent-color:
-        #df86a5;
-
-}
-
-
-.subtask.done span {
-
-    text-decoration:
-        line-through;
-
-    color: #aaa;
-
-}
-
-
-/* =========================
-   BUTTONS
-========================= */
-
-.task-actions {
-
-    display: flex;
-
-    gap: 8px;
-
-    margin-top: 15px;
-
-}
-
-
-.edit-task,
-.delete-task {
-
-    padding:
-        7px 11px;
-
-    border-radius: 8px;
-
-    font-size: 11px;
-
-}
-
-
-.edit-task {
-
-    background: #fff5e8;
-
-    color: #b58b51;
-
-}
-
-
-.delete-task {
-
-    background: #fff0f0;
-
-    color: #d97b7b;
-
-}
-
-
-/* =========================
-   MODAL
-========================= */
-
-.modal {
-
-    position: fixed;
-
-    inset: 0;
-
-    background:
-        rgba(70,50,60,.25);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-    z-index: 100;
-
-}
-
-
-.modal-box {
-
-    background: white;
-
-    width: 100%;
-
-    max-width: 500px;
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    padding: 30px;
-
-    border-radius: 22px;
-
-    position: relative;
-
-}
-
-
-.modal-box h2 {
-
-    margin-bottom: 5px;
-
-}
-
-
-.modal-box > p {
-
-    color: #aaa;
-
-    font-size: 13px;
-
-    margin-bottom: 25px;
-
-}
-
-
-.close {
-
-    position: absolute;
-
-    right: 20px;
-
-    top: 18px;
-
-    background: transparent;
-
-    font-size: 25px;
-
-    color: #aaa;
-
-}
-
-
-.modal-box label {
-
-    display: block;
-
-    font-size: 13px;
-
-    margin:
-        15px 0 7px;
-
-    color: #665b64;
-
-}
-
-
-.modal-box input[type="text"],
-.modal-box input[type="date"] {
-
-    width: 100%;
-
-    padding: 12px;
-
-    border:
-        1px solid #eadfe5;
-
-    border-radius: 10px;
-
-    outline: none;
-
-    background: white;
-
-}
-
-
-.modal-box input:focus {
-
-    border-color:
-        #e990ad;
-
-}
-
-
-/* =========================
-   ICON PICKER
-========================= */
-
-.icon-picker {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(10,1fr);
-
-    gap: 7px;
-
-}
-
-
-.icon-option {
-
-    width: 38px;
-
-    height: 38px;
-
-    border-radius: 10px;
-
-    background: #fff8fb;
-
-    border:
-        1px solid #f1e2e9;
-
-    font-size: 21px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    transition: .15s;
-
-}
-
-
-.icon-option:hover {
-
-    background: #ffeaf2;
-
-    transform:
-        translateY(-2px);
-
-}
-
-
-.icon-option.selected {
-
-    background: #ffe0eb;
-
-    border:
-        2px solid #e990ad;
-
-    transform:
-        scale(1.05);
-
-}
-
-
-/* =========================
-   ADD SUBTASK
-========================= */
-
-.add-sub {
-
-    width: 100%;
-
-    background: #fff5f8;
-
-    color: #d47798;
-
-    padding: 10px;
-
-    border-radius: 10px;
-
-    margin-top: 10px;
-
-}
-
-
-/* =========================
-   SAVE
-========================= */
-
-.save-btn {
-
-    width: 100%;
-
-    background: #e990ad;
-
-    color: white;
-
-    padding: 13px;
-
-    border-radius: 11px;
-
-    margin-top: 20px;
-
-}
-
-
-.save-btn:hover {
-
-    background: #df7f9e;
-
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width:800px) {
-
-
-    .sidebar {
-
-        width: 70px;
-
-        padding:
-            20px 10px;
+        return 0;
 
     }
 
 
-    .logo div,
-    .side-bottom {
-
-        display: none;
-
-    }
-
-
-    .logo {
-
-        justify-content:
-            center;
-
-    }
+    const completed =
+        task.subtasks.filter(
+            sub =>
+                sub.completed
+        ).length;
 
 
-    .nav-btn {
+    return Math.round(
 
-        font-size: 0;
+        (
+            completed /
+            task.subtasks.length
+        ) * 100
 
-        text-align: center;
+    );
 
-    }
-
-
-    .nav-btn::first-letter {
-
-        font-size: 20px;
-
-    }
+}
 
 
-    .main {
+/* =================================
+   DAYS UNTIL
+================================= */
 
-        padding:
-            25px 18px;
+function daysUntil(date) {
+
+    if (!date) {
+
+        return null;
 
     }
 
 
-    .summary {
+    const today =
+        new Date();
 
-        grid-template-columns:
-            repeat(2,1fr);
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const deadline =
+        new Date(
+            date +
+            "T00:00:00"
+        );
+
+
+    return Math.ceil(
+
+        (
+            deadline -
+            today
+        ) /
+        86400000
+
+    );
+
+}
+
+
+/* =================================
+   FORMAT DATE
+================================= */
+
+function formatDate(date) {
+
+    if (!date) {
+
+        return "No deadline";
+
+    }
+
+
+    const d =
+        new Date(
+            date +
+            "T00:00:00"
+        );
+
+
+    return d.toLocaleDateString(
+        "en-GB",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =================================
+   TASK HTML
+================================= */
+
+function taskHTML(task) {
+
+    const progress =
+        getProgress(
+            task
+        );
+
+
+    const days =
+        daysUntil(
+            task.deadline
+        );
+
+
+    let deadlineText =
+        formatDate(
+            task.deadline
+        );
+
+
+    let soonClass =
+        "";
+
+
+    if (
+        days !== null
+    ) {
+
+        if (
+            days < 0
+        ) {
+
+            deadlineText +=
+                " · Overdue";
+
+
+            soonClass =
+                "soon";
+
+        }
+
+
+        else if (
+            days === 0
+        ) {
+
+            deadlineText +=
+                " · Due today";
+
+
+            soonClass =
+                "soon";
+
+        }
+
+
+        else if (
+            days <= 3
+        ) {
+
+            deadlineText +=
+                ` · ${days} days left`;
+
+
+            soonClass =
+                "soon";
+
+        }
 
     }
 
 
-    .task-grid {
+    let subtasksHTML =
+        "";
 
-        grid-template-columns:
-            1fr;
+
+    if (
+        task.subtasks &&
+        task.subtasks.length
+    ) {
+
+        subtasksHTML =
+            task.subtasks
+                .map(
+                    (
+                        sub,
+                        index
+                    ) => {
+
+                        return `
+
+                        <div class="
+                            subtask
+                            ${
+                                sub.completed
+                                ? "done"
+                                : ""
+                            }
+                        ">
+
+                            <input
+                                type="checkbox"
+
+                                ${
+                                    sub.completed
+                                    ? "checked"
+                                    : ""
+                                }
+
+                                onchange="
+                                    toggleSubtask(
+                                        ${task.id},
+                                        ${index}
+                                    )
+                                "
+                            >
+
+                            <span>
+                                ${
+                                    escapeHTML(
+                                        sub.text
+                                    )
+                                }
+                            </span>
+
+                        </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
 
     }
 
 
-    .top {
+    else {
 
-        align-items:
-            flex-start;
+        subtasksHTML = `
 
-        gap: 15px;
+            <div class="subtask">
 
-    }
+                ยังไม่มีงานย่อย
 
+            </div>
 
-    h1 {
-
-        font-size: 23px;
+        `;
 
     }
 
 
-    .add-main {
+    return `
 
-        padding:
-            10px 13px;
+        <div class="task-card">
 
-        font-size: 12px;
+
+            <div class="task-top">
+
+
+                <div class="task-icon">
+
+                    ${
+                        task.icon ||
+                        "🌷"
+                    }
+
+                </div>
+
+
+                <div>
+
+                    <div class="task-title">
+
+                        ${
+                            escapeHTML(
+                                task.name
+                            )
+                        }
+
+                    </div>
+
+
+                    <div class="
+                        deadline
+                        ${soonClass}
+                    ">
+
+                        📅
+                        ${deadlineText}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="
+                        width:${progress}%
+                    "
+                ></div>
+
+            </div>
+
+
+            <div class="progress-text">
+
+                ${progress}% completed
+
+            </div>
+
+
+
+            <div class="subtasks">
+
+                ${subtasksHTML}
+
+            </div>
+
+
+
+            <div class="task-actions">
+
+
+                <button
+                    type="button"
+                    class="edit-task"
+                    onclick="
+                        editTask(
+                            ${task.id}
+                        )
+                    "
+                >
+
+                    ✏️ Edit
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="delete-task"
+                    onclick="
+                        deleteTask(
+                            ${task.id}
+                        )
+                    "
+                >
+
+                    🗑 Delete
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+/* =================================
+   RENDER
+================================= */
+
+function render() {
+
+    const dashboard =
+        document.getElementById(
+            "dashboardTasks"
+        );
+
+
+    const allTasks =
+        document.getElementById(
+            "allTasks"
+        );
+
+
+    if (
+        !dashboard ||
+        !allTasks
+    ) {
+
+        return;
 
     }
 
 
-    .icon-picker {
+    const sorted =
+        [...tasks].sort(
+            (
+                a,
+                b
+            ) => {
 
-        grid-template-columns:
-            repeat(5,1fr);
+                if (
+                    !a.deadline
+                ) {
+
+                    return 1;
+
+                }
+
+
+                if (
+                    !b.deadline
+                ) {
+
+                    return -1;
+
+                }
+
+
+                return (
+
+                    new Date(
+                        a.deadline
+                    ) -
+
+                    new Date(
+                        b.deadline
+                    )
+
+                );
+
+            }
+        );
+
+
+    dashboard.innerHTML =
+        sorted
+            .slice(0,6)
+            .map(
+                taskHTML
+            )
+            .join("");
+
+
+    allTasks.innerHTML =
+        sorted
+            .map(
+                taskHTML
+            )
+            .join("");
+
+
+    updateSummary();
+
+}
+
+
+/* =================================
+   SUMMARY
+================================= */
+
+function updateSummary() {
+
+    const total =
+        tasks.length;
+
+
+    const completed =
+        tasks.filter(
+            task =>
+                getProgress(task)
+                === 100
+        ).length;
+
+
+    const progress =
+        total -
+        completed;
+
+
+    const dueSoon =
+        tasks.filter(
+            task => {
+
+                const days =
+                    daysUntil(
+                        task.deadline
+                    );
+
+
+                return (
+
+                    days !== null &&
+
+                    days >= 0 &&
+
+                    days <= 3 &&
+
+                    getProgress(
+                        task
+                    ) < 100
+
+                );
+
+            }
+        ).length;
+
+
+    const totalElement =
+        document.getElementById(
+            "totalTasks"
+        );
+
+
+    const progressElement =
+        document.getElementById(
+            "progressTasks"
+        );
+
+
+    const dueElement =
+        document.getElementById(
+            "dueTasks"
+        );
+
+
+    const completedElement =
+        document.getElementById(
+            "completedTasks"
+        );
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            total;
 
     }
+
+
+    if (progressElement) {
+
+        progressElement.textContent =
+            progress;
+
+    }
+
+
+    if (dueElement) {
+
+        dueElement.textContent =
+            dueSoon;
+
+    }
+
+
+    if (completedElement) {
+
+        completedElement.textContent =
+            completed;
+
+    }
+
+}
+
+
+/* =================================
+   ESCAPE HTML
+================================= */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
 
 }
