@@ -2,7 +2,6 @@
 <html lang="th">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,13 +9,28 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Bloomy Planner 🌷</title>
+    <title>Bloomy Planner</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap"
+        rel="stylesheet"
+    >
 
     <link
         rel="stylesheet"
         href="style.css"
     >
-
 </head>
 
 
@@ -24,66 +38,84 @@
 
 <div class="app">
 
-
     <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
-        <div class="logo">
+        <div class="brand">
 
-            <div class="logo-flower">
+            <div class="brand-mark">
                 🌷
             </div>
 
             <div>
+                <div class="brand-name">
+                    Bloomy
+                </div>
 
-                <strong>Bloomy</strong>
-
-                <small>
-                    My Planner
-                </small>
-
+                <div class="brand-sub">
+                    personal planner
+                </div>
             </div>
 
         </div>
 
 
-        <nav>
+        <div class="menu-label">
+            MENU
+        </div>
+
+
+        <nav class="navigation">
 
             <button
-                class="nav-btn active"
+                class="nav-item active"
+                id="dashboardNav"
+                type="button"
                 onclick="showPage('dashboard')"
             >
-                🏡 Dashboard
+                <span>⌂</span>
+                <span>Dashboard</span>
             </button>
 
 
             <button
-                class="nav-btn"
+                class="nav-item"
+                id="tasksNav"
+                type="button"
                 onclick="showPage('tasks')"
             >
-                🌸 My Tasks
+                <span>✓</span>
+                <span>My Tasks</span>
             </button>
 
         </nav>
 
 
-        <div class="side-bottom">
+        <div class="sidebar-note">
 
-            🌼 Little steps<br>
+            <div class="note-flower">
+                ✿
+            </div>
 
-            make big things bloom.
+            <div>
+                <strong>
+                    One little step
+                </strong>
+
+                <p>
+                    at a time ♡
+                </p>
+            </div>
 
         </div>
 
     </aside>
 
 
-
     <!-- MAIN -->
 
     <main class="main">
-
 
         <!-- DASHBOARD -->
 
@@ -92,169 +124,165 @@
             class="page"
         >
 
-            <div class="top">
-
+            <header class="hero">
 
                 <div>
 
-                    <p class="small">
-                        Good evening 🌷
-                    </p>
-
+                    <div class="eyebrow">
+                        MY LITTLE SPACE ✦
+                    </div>
 
                     <h1>
-                        Let's make things bloom!
+                        Let's make things
+                        <span>bloom.</span>
                     </h1>
 
-
                     <p
-                        class="date"
                         id="today"
+                        class="today"
                     ></p>
 
                 </div>
 
 
-
                 <button
-                    class="add-main"
+                    class="primary-btn"
+                    type="button"
                     onclick="openCreateModal()"
                 >
-
-                    ＋ New Task
-
+                    <span>＋</span>
+                    New task
                 </button>
 
-            </div>
+            </header>
 
 
+            <!-- STATS -->
 
-            <!-- SUMMARY -->
+            <div class="stats">
 
-            <div class="summary">
+                <div class="stat-card stat-pink">
 
-
-                <div class="summary-card pink">
-
-                    <span>
+                    <div class="stat-icon">
                         🌷
-                    </span>
+                    </div>
 
                     <div>
 
-                        <p>
-                            Total Tasks
-                        </p>
+                        <div class="stat-label">
+                            Total tasks
+                        </div>
 
-                        <strong
+                        <div
                             id="totalTasks"
+                            class="stat-number"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
                 </div>
 
 
+                <div class="stat-card stat-lavender">
 
-                <div class="summary-card purple">
-
-                    <span>
-                        💜
-                    </span>
+                    <div class="stat-icon">
+                        ✦
+                    </div>
 
                     <div>
 
-                        <p>
-                            In Progress
-                        </p>
+                        <div class="stat-label">
+                            In progress
+                        </div>
 
-                        <strong
+                        <div
                             id="progressTasks"
+                            class="stat-number"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
                 </div>
 
 
+                <div class="stat-card stat-yellow">
 
-                <div class="summary-card yellow">
-
-                    <span>
-                        🌼
-                    </span>
+                    <div class="stat-icon">
+                        ☼
+                    </div>
 
                     <div>
 
-                        <p>
-                            Due Soon
-                        </p>
+                        <div class="stat-label">
+                            Due soon
+                        </div>
 
-                        <strong
+                        <div
                             id="dueTasks"
+                            class="stat-number"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
                 </div>
 
 
+                <div class="stat-card stat-green">
 
-                <div class="summary-card green">
-
-                    <span>
-                        🌿
-                    </span>
+                    <div class="stat-icon">
+                        ♡
+                    </div>
 
                     <div>
 
-                        <p>
+                        <div class="stat-label">
                             Completed
-                        </p>
+                        </div>
 
-                        <strong
+                        <div
                             id="completedTasks"
+                            class="stat-number"
                         >
                             0
-                        </strong>
+                        </div>
 
                     </div>
 
                 </div>
-
 
             </div>
-
 
 
             <!-- UPCOMING -->
 
-            <div class="section-title">
-
+            <div class="section-header">
 
                 <div>
 
                     <h2>
-                        Upcoming Tasks 🌸
+                        Upcoming
                     </h2>
 
                     <p>
-                        สิ่งที่ต้องทำเร็ว ๆ นี้
+                        Your next little steps
                     </p>
 
                 </div>
 
 
                 <button
+                    class="text-btn"
+                    type="button"
                     onclick="showPage('tasks')"
                 >
-                    View all →
+                    View all
+                    <span>→</span>
                 </button>
 
             </div>
@@ -265,9 +293,7 @@
                 class="task-grid"
             ></div>
 
-
         </section>
-
 
 
         <!-- ALL TASKS -->
@@ -277,51 +303,43 @@
             class="page hidden"
         >
 
-
-            <div class="top">
-
+            <header class="hero">
 
                 <div>
 
-                    <p class="small">
-                        My work 🌷
-                    </p>
-
+                    <div class="eyebrow">
+                        YOUR WORK ✦
+                    </div>
 
                     <h1>
-                        All Tasks
+                        My <span>tasks.</span>
                     </h1>
 
-
-                    <p class="date">
-                        จัดการงานและ deadline ของคุณ
+                    <p class="today">
+                        Everything you want to get done.
                     </p>
 
                 </div>
 
 
-
                 <button
-                    class="add-main"
+                    class="primary-btn"
+                    type="button"
                     onclick="openCreateModal()"
                 >
-
-                    ＋ New Task
-
+                    <span>＋</span>
+                    New task
                 </button>
 
-
-            </div>
+            </header>
 
 
             <div
                 id="allTasks"
-                class="task-list"
+                class="all-task-list"
             ></div>
 
-
         </section>
-
 
     </main>
 
@@ -329,309 +347,175 @@
 
 
 
-<!-- =========================
-     MODAL
-========================= -->
+<!-- MODAL -->
 
 <div
     id="modal"
     class="modal hidden"
 >
 
+    <div class="modal-backdrop"></div>
 
-    <div class="modal-box">
 
+    <div class="modal-card">
 
         <button
-            class="close"
+            type="button"
+            class="modal-close"
             onclick="closeModal()"
         >
             ×
         </button>
 
 
+        <div class="modal-heading">
 
-        <h2 id="modalTitle">
-            🌷 Create a new task
-        </h2>
+            <div class="modal-flower">
+                🌷
+            </div>
+
+            <div>
+
+                <h2 id="modalTitle">
+                    Create a new task
+                </h2>
+
+                <p>
+                    Add something you want to accomplish.
+                </p>
+
+            </div>
+
+        </div>
 
 
-        <p>
-            เพิ่มงานที่ต้องทำ
-        </p>
+        <!-- TASK NAME -->
 
+        <div class="field">
 
+            <label for="taskName">
+                Task name
+            </label>
 
-        <!-- NAME -->
+            <input
+                id="taskName"
+                type="text"
+                placeholder="e.g. Research project"
+                autocomplete="off"
+            >
 
-        <label>
-            ชื่องาน
-        </label>
-
-
-        <input
-            id="taskName"
-            type="text"
-            placeholder="เช่น งานวิจัย"
-        >
-
+        </div>
 
 
         <!-- ICON -->
 
-        <label>
-            เลือกไอคอน
-        </label>
+        <div class="field">
+
+            <label>
+                Choose an icon
+            </label>
 
 
-        <div
-            id="iconPicker"
-            class="icon-picker"
-        >
-
-            <button
-                type="button"
-                class="icon-option selected"
-                data-icon="🌸"
+            <div
+                id="iconPicker"
+                class="icon-picker"
             >
-                🌸
-            </button>
+
+                <button type="button" class="icon-option selected" data-icon="🌸">🌸</button>
+                <button type="button" class="icon-option" data-icon="🌷">🌷</button>
+                <button type="button" class="icon-option" data-icon="🌼">🌼</button>
+                <button type="button" class="icon-option" data-icon="🌻">🌻</button>
+                <button type="button" class="icon-option" data-icon="🪻">🪻</button>
+
+                <button type="button" class="icon-option" data-icon="🌹">🌹</button>
+                <button type="button" class="icon-option" data-icon="🌺">🌺</button>
+                <button type="button" class="icon-option" data-icon="🌿">🌿</button>
+                <button type="button" class="icon-option" data-icon="🍀">🍀</button>
+                <button type="button" class="icon-option" data-icon="🍃">🍃</button>
+
+                <button type="button" class="icon-option" data-icon="📚">📚</button>
+                <button type="button" class="icon-option" data-icon="📝">📝</button>
+                <button type="button" class="icon-option" data-icon="💻">💻</button>
+                <button type="button" class="icon-option" data-icon="📊">📊</button>
+                <button type="button" class="icon-option" data-icon="🎓">🎓</button>
+
+                <button type="button" class="icon-option" data-icon="💡">💡</button>
+                <button type="button" class="icon-option" data-icon="🧪">🧪</button>
+                <button type="button" class="icon-option" data-icon="📖">📖</button>
+                <button type="button" class="icon-option" data-icon="⭐">⭐</button>
+                <button type="button" class="icon-option" data-icon="🐝">🐝</button>
+
+            </div>
+
+        </div>
 
 
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌷"
+        <!-- DEADLINE -->
+
+        <div class="field">
+
+            <label for="taskDeadline">
+                Deadline
+            </label>
+
+            <input
+                id="taskDeadline"
+                type="date"
             >
-                🌷
-            </button>
+
+        </div>
 
 
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌼"
-            >
-                🌼
-            </button>
+        <!-- SUBTASKS -->
+
+        <div class="field">
+
+            <div class="label-row">
+
+                <label>
+                    Subtasks
+                </label>
+
+                <span>
+                    optional
+                </span>
+
+            </div>
 
 
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌻"
-            >
-                🌻
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🪻"
-            >
-                🪻
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌹"
-            >
-                🌹
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌺"
-            >
-                🌺
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🌿"
-            >
-                🌿
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🍀"
-            >
-                🍀
-            </button>
+            <div
+                id="subtaskInputs"
+                class="subtask-inputs"
+            ></div>
 
 
             <button
                 type="button"
-                class="icon-option"
-                data-icon="🍃"
+                class="add-subtask-btn"
+                onclick="addSubtaskInput()"
             >
-                🍃
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="📚"
-            >
-                📚
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="📝"
-            >
-                📝
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="💻"
-            >
-                💻
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="📊"
-            >
-                📊
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🎓"
-            >
-                🎓
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="💡"
-            >
-                💡
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🧪"
-            >
-                🧪
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="📖"
-            >
-                📖
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="⭐"
-            >
-                ⭐
-            </button>
-
-
-            <button
-                type="button"
-                class="icon-option"
-                data-icon="🐝"
-            >
-                🐝
+                ＋ Add a subtask
             </button>
 
         </div>
 
 
-
-        <!-- DEADLINE -->
-
-        <label>
-            Deadline
-        </label>
-
-
-        <input
-            id="taskDeadline"
-            type="date"
-        >
-
-
-
-        <!-- SUBTASK -->
-
-        <label>
-            งานย่อย
-        </label>
-
-
-        <div
-            id="subtaskInputs"
-        ></div>
-
-
-        <button
-            type="button"
-            class="add-sub"
-            onclick="addSubtaskInput()"
-        >
-
-            ＋ เพิ่มงานย่อย
-
-        </button>
-
-
-
-        <!-- SAVE -->
-
         <button
             type="button"
             id="saveButton"
-            class="save-btn"
+            class="create-btn"
             onclick="saveTask()"
         >
-
-            🌷 Create Task
-
+            Create task
+            <span>→</span>
         </button>
-
 
     </div>
 
 </div>
 
 
-
 <script src="script.js"></script>
 
 </body>
-
 </html>
