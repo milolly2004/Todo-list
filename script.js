@@ -1,137 +1,261 @@
-/* =========================
+/* ==========================================
    BLOOMY PLANNER
-========================= */
+========================================== */
 
 
-/* ICONS */
+/* ==========================================
+   DATA
+========================================== */
 
-const icons = [
-    "🌸",
-    "🌷",
-    "🌼",
-    "🌻",
-    "🪻",
-    "🌹",
-    "🌺",
-    "🌿",
-    "🍀",
-    "🍃",
-    "📚",
-    "📝",
-    "💻",
-    "📊",
-    "🎓",
-    "💡",
-    "🧪",
-    "📖",
-    "⭐",
-    "🐝"
-];
-
-
-/* DATA */
-
-let tasks =
-    JSON.parse(
-        localStorage.getItem("bloomyTasks")
-    ) || [];
-
+let tasks = [];
 
 let editingTaskId = null;
 
-let selectedIcon = icons[0];
+let selectedIcon = "🌸";
 
 
-/* =========================
-   ICON PICKER
-========================= */
+/* ==========================================
+   LOAD DATA
+========================================== */
 
-function renderIconPicker() {
+try {
 
-    const picker =
-        document.getElementById("iconPicker");
-
-    picker.innerHTML = "";
-
-    icons.forEach(icon => {
-
-        const button =
-            document.createElement("button");
-
-        button.type = "button";
-
-        button.className =
-            "icon-option";
-
-        button.textContent = icon;
-
-
-        if (icon === selectedIcon) {
-            button.classList.add("selected");
-        }
-
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                selectedIcon = icon;
-
-                renderIconPicker();
-
-            }
+    const saved =
+        localStorage.getItem(
+            "bloomyTasks"
         );
 
 
-        picker.appendChild(button);
+    if (saved) {
 
-    });
+        tasks =
+            JSON.parse(saved);
+
+    }
+
+} catch (error) {
+
+    console.log(
+        "Could not load saved tasks."
+    );
+
+    tasks = [];
 
 }
 
 
-/* =========================
-   PAGE
-========================= */
+/* ==========================================
+   START
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        setupIconPicker();
+
+        updateToday();
+
+        render();
+
+    }
+);
+
+
+/* ==========================================
+   ICON PICKER
+========================================== */
+
+function setupIconPicker() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".icon-option"
+        );
+
+
+    buttons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    selectedIcon =
+                        button.dataset.icon;
+
+
+                    buttons.forEach(
+                        function (item) {
+
+                            item.classList.remove(
+                                "selected"
+                            );
+
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "selected"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   SELECT ICON
+========================================== */
+
+function selectIcon(icon) {
+
+    selectedIcon = icon;
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".icon-option"
+        );
+
+
+    buttons.forEach(
+        function (button) {
+
+            if (
+                button.dataset.icon ===
+                icon
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            } else {
+
+                button.classList.remove(
+                    "selected"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   TODAY
+========================================== */
+
+function updateToday() {
+
+    const element =
+        document.getElementById(
+            "today"
+        );
+
+
+    if (!element) return;
+
+
+    const today =
+        new Date();
+
+
+    element.textContent =
+        today.toLocaleDateString(
+            "en-GB",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+}
+
+
+/* ==========================================
+   PAGE NAVIGATION
+========================================== */
 
 function showPage(page) {
 
-    document
-        .getElementById("dashboardPage")
-        .classList.toggle(
-            "hidden",
-            page !== "dashboard"
+    const dashboard =
+        document.getElementById(
+            "dashboardPage"
         );
 
 
-    document
-        .getElementById("tasksPage")
-        .classList.toggle(
-            "hidden",
-            page !== "tasks"
+    const tasksPage =
+        document.getElementById(
+            "tasksPage"
         );
 
 
-    document
-        .querySelectorAll(".nav-btn")
-        .forEach(btn => {
-
-            btn.classList.remove("active");
-
-        });
+    const dashboardNav =
+        document.getElementById(
+            "dashboardNav"
+        );
 
 
-    if (page === "dashboard") {
+    const tasksNav =
+        document.getElementById(
+            "tasksNav"
+        );
 
-        document
-            .querySelectorAll(".nav-btn")[0]
-            .classList.add("active");
+
+    if (
+        page === "dashboard"
+    ) {
+
+        dashboard.classList.remove(
+            "hidden"
+        );
+
+
+        tasksPage.classList.add(
+            "hidden"
+        );
+
+
+        dashboardNav.classList.add(
+            "active"
+        );
+
+
+        tasksNav.classList.remove(
+            "active"
+        );
 
     } else {
 
-        document
-            .querySelectorAll(".nav-btn")[1]
-            .classList.add("active");
+        dashboard.classList.add(
+            "hidden"
+        );
+
+
+        tasksPage.classList.remove(
+            "hidden"
+        );
+
+
+        dashboardNav.classList.remove(
+            "active"
+        );
+
+
+        tasksNav.classList.add(
+            "active"
+        );
 
     }
 
@@ -141,32 +265,34 @@ function showPage(page) {
 }
 
 
-/* =========================
-   MODAL
-========================= */
+/* ==========================================
+   OPEN CREATE MODAL
+========================================== */
 
-function openModal() {
+function openCreateModal() {
 
     editingTaskId = null;
 
-    selectedIcon = icons[0];
+    selectedIcon = "🌸";
 
 
     document
         .getElementById("modal")
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
         .getElementById("modalTitle")
         .textContent =
-        "🌷 Create a new task";
+        "Create a new task";
 
 
     document
         .getElementById("saveButton")
-        .textContent =
-        "🌷 Create Task";
+        .innerHTML =
+        'Create task <span>→</span>';
 
 
     document
@@ -186,25 +312,47 @@ function openModal() {
 
     addSubtaskInput();
 
-    renderIconPicker();
+
+    selectIcon("🌸");
+
+
+    setTimeout(
+        function () {
+
+            document
+                .getElementById("taskName")
+                .focus();
+
+        },
+        100
+    );
 
 }
 
+
+/* ==========================================
+   CLOSE MODAL
+========================================== */
 
 function closeModal() {
 
     document
         .getElementById("modal")
-        .classList.add("hidden");
+        .classList.add(
+            "hidden"
+        );
 
 }
 
 
-/* =========================
-   SUBTASK INPUT
-========================= */
+/* ==========================================
+   ADD SUBTASK
+========================================== */
 
-function addSubtaskInput(value = "") {
+function addSubtaskInput(
+    value = "",
+    completed = false
+) {
 
     const container =
         document.getElementById(
@@ -212,138 +360,198 @@ function addSubtaskInput(value = "") {
         );
 
 
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "subtask-input-row";
+
+
     const input =
-        document.createElement("input");
+        document.createElement(
+            "input"
+        );
 
 
     input.type = "text";
 
-    input.className =
-        "new-subtask";
-
-
     input.placeholder =
-        "เช่น ทำแบบสัมภาษณ์";
+        "e.g. Finish chapter 1";
+
+    input.value =
+        value;
 
 
-    input.value = value;
+    input.className =
+        "subtask-input";
 
 
-    input.style.width = "100%";
-
-    input.style.padding = "10px";
-
-    input.style.border =
-        "1px solid #eadfe5";
-
-    input.style.borderRadius =
-        "10px";
-
-    input.style.marginTop = "8px";
+    input.dataset.completed =
+        completed
+        ? "true"
+        : "false";
 
 
-    container.appendChild(input);
+    const remove =
+        document.createElement(
+            "button"
+        );
+
+
+    remove.type = "button";
+
+    remove.className =
+        "remove-subtask";
+
+    remove.textContent =
+        "×";
+
+
+    remove.addEventListener(
+        "click",
+        function () {
+
+            row.remove();
+
+        }
+    );
+
+
+    row.appendChild(
+        input
+    );
+
+
+    row.appendChild(
+        remove
+    );
+
+
+    container.appendChild(
+        row
+    );
 
 }
 
 
-/* =========================
+/* ==========================================
    SAVE TASK
-========================= */
+========================================== */
 
 function saveTask() {
 
+    const nameElement =
+        document.getElementById(
+            "taskName"
+        );
+
+
+    const deadlineElement =
+        document.getElementById(
+            "taskDeadline"
+        );
+
+
     const name =
-        document
-            .getElementById("taskName")
-            .value
-            .trim();
+        nameElement.value.trim();
 
 
     const deadline =
-        document
-            .getElementById("taskDeadline")
-            .value;
+        deadlineElement.value;
 
 
     if (!name) {
 
-        alert("กรุณาใส่ชื่องาน");
+        alert(
+            "ใส่ชื่องานก่อนนะ 🌷"
+        );
+
+
+        nameElement.focus();
+
 
         return;
 
     }
 
 
-    const inputs =
+    const inputRows =
         document.querySelectorAll(
-            ".new-subtask"
+            ".subtask-input-row"
         );
 
 
     const subtasks = [];
 
 
-    inputs.forEach(input => {
+    inputRows.forEach(
+        function (row) {
 
-        if (input.value.trim()) {
+            const input =
+                row.querySelector(
+                    "input"
+                );
 
-            subtasks.push({
 
-                text:
-                    input.value.trim(),
+            const text =
+                input.value.trim();
 
-                completed: false
 
-            });
+            if (text) {
+
+                subtasks.push({
+
+                    text:
+                        text,
+
+                    completed:
+                        input.dataset.completed
+                        === "true"
+
+                });
+
+            }
 
         }
+    );
 
-    });
 
+    /* ==================================
+       EDIT EXISTING TASK
+    ================================== */
 
-    /* EDIT */
-
-    if (editingTaskId !== null) {
+    if (
+        editingTaskId !== null
+    ) {
 
         const task =
             tasks.find(
-                t =>
-                    t.id === editingTaskId
+                function (item) {
+
+                    return (
+                        item.id ===
+                        editingTaskId
+                    );
+
+                }
             );
 
 
         if (task) {
 
-            task.name = name;
-
-            task.icon = selectedIcon;
-
-            task.deadline = deadline;
+            task.name =
+                name;
 
 
-            /*
-                Keep old completed status
-                when editing subtasks
-            */
+            task.icon =
+                selectedIcon;
 
-            subtasks.forEach(
-                (newSub, index) => {
 
-                    if (
-                        task.subtasks[index] &&
-                        task.subtasks[index].text
-                            === newSub.text
-                    ) {
-
-                        newSub.completed =
-                            task.subtasks[index]
-                                .completed;
-
-                    }
-
-                }
-            );
+            task.deadline =
+                deadline;
 
 
             task.subtasks =
@@ -354,28 +562,40 @@ function saveTask() {
     }
 
 
-    /* CREATE */
+    /* ==================================
+       CREATE NEW TASK
+    ================================== */
 
     else {
 
-        tasks.push({
+        const task = {
 
-            id: Date.now(),
+            id:
+                Date.now(),
 
-            name: name,
+            name:
+                name,
 
-            icon: selectedIcon,
+            icon:
+                selectedIcon,
 
-            deadline: deadline,
+            deadline:
+                deadline,
 
-            subtasks: subtasks
+            subtasks:
+                subtasks
 
-        });
+        };
+
+
+        tasks.push(
+            task
+        );
 
     }
 
 
-    saveTasks();
+    saveData();
 
     closeModal();
 
@@ -384,42 +604,51 @@ function saveTask() {
 }
 
 
-/* =========================
+/* ==========================================
    EDIT TASK
-========================= */
+========================================== */
 
 function editTask(id) {
 
     const task =
         tasks.find(
-            t => t.id === id
+            function (item) {
+
+                return item.id === id;
+
+            }
         );
 
 
     if (!task) return;
 
 
-    editingTaskId = id;
+    editingTaskId =
+        id;
+
 
     selectedIcon =
-        task.icon || icons[0];
+        task.icon ||
+        "🌸";
 
 
     document
         .getElementById("modal")
-        .classList.remove("hidden");
+        .classList.remove(
+            "hidden"
+        );
 
 
     document
         .getElementById("modalTitle")
         .textContent =
-        "✏️ Edit task";
+        "Edit your task";
 
 
     document
         .getElementById("saveButton")
-        .textContent =
-        "💾 Save Changes";
+        .innerHTML =
+        'Save changes <span>→</span>';
 
 
     document
@@ -431,21 +660,30 @@ function editTask(id) {
     document
         .getElementById("taskDeadline")
         .value =
-        task.deadline || "";
+        task.deadline ||
+        "";
 
 
-    document
-        .getElementById("subtaskInputs")
-        .innerHTML = "";
+    const container =
+        document.getElementById(
+            "subtaskInputs"
+        );
 
 
-    if (task.subtasks.length) {
+    container.innerHTML = "";
+
+
+    if (
+        task.subtasks &&
+        task.subtasks.length > 0
+    ) {
 
         task.subtasks.forEach(
-            sub => {
+            function (sub) {
 
                 addSubtaskInput(
-                    sub.text
+                    sub.text,
+                    sub.completed
                 );
 
             }
@@ -458,22 +696,26 @@ function editTask(id) {
     }
 
 
-    renderIconPicker();
+    selectIcon(
+        selectedIcon
+    );
 
 }
 
 
-/* =========================
-   DELETE
-========================= */
+/* ==========================================
+   DELETE TASK
+========================================== */
 
 function deleteTask(id) {
 
-    if (
-        !confirm(
-            "ต้องการลบงานนี้ใช่ไหม?"
-        )
-    ) {
+    const confirmed =
+        window.confirm(
+            "Delete this task?"
+        );
+
+
+    if (!confirmed) {
 
         return;
 
@@ -482,74 +724,109 @@ function deleteTask(id) {
 
     tasks =
         tasks.filter(
-            task =>
-                task.id !== id
+            function (task) {
+
+                return (
+                    task.id !== id
+                );
+
+            }
         );
 
 
-    saveTasks();
+    saveData();
 
     render();
 
 }
 
 
-/* =========================
+/* ==========================================
    TOGGLE SUBTASK
-========================= */
+========================================== */
 
 function toggleSubtask(
     taskId,
-    subIndex
+    subtaskIndex
 ) {
 
     const task =
         tasks.find(
-            t =>
-                t.id === taskId
+            function (item) {
+
+                return (
+                    item.id ===
+                    taskId
+                );
+
+            }
         );
 
 
     if (!task) return;
 
 
-    task.subtasks[subIndex]
-        .completed =
-        !task.subtasks[subIndex]
-            .completed;
+    if (
+        !task.subtasks ||
+        !task.subtasks[subtaskIndex]
+    ) {
+
+        return;
+
+    }
 
 
-    saveTasks();
+    task.subtasks[
+        subtaskIndex
+    ].completed =
+        !task.subtasks[
+            subtaskIndex
+        ].completed;
+
+
+    saveData();
 
     render();
 
 }
 
 
-/* =========================
-   SAVE LOCAL DATA
-========================= */
+/* ==========================================
+   SAVE LOCAL STORAGE
+========================================== */
 
-function saveTasks() {
+function saveData() {
 
-    localStorage.setItem(
+    try {
 
-        "bloomyTasks",
+        localStorage.setItem(
+            "bloomyTasks",
+            JSON.stringify(
+                tasks
+            )
+        );
 
-        JSON.stringify(tasks)
+    } catch (error) {
 
-    );
+        console.log(
+            "Could not save tasks."
+        );
+
+    }
 
 }
 
 
-/* =========================
+/* ==========================================
    PROGRESS
-========================= */
+========================================== */
 
 function getProgress(task) {
 
-    if (!task.subtasks.length) {
+    if (
+        !task.subtasks ||
+        task.subtasks.length === 0
+    ) {
 
         return 0;
 
@@ -558,30 +835,37 @@ function getProgress(task) {
 
     const completed =
         task.subtasks.filter(
-            sub =>
-                sub.completed
+            function (sub) {
+
+                return (
+                    sub.completed === true
+                );
+
+            }
         ).length;
 
 
     return Math.round(
-
         (
             completed /
             task.subtasks.length
         ) * 100
-
     );
 
 }
 
 
-/* =========================
+/* ==========================================
    DEADLINE
-========================= */
+========================================== */
 
 function daysUntil(date) {
 
-    if (!date) return null;
+    if (!date) {
+
+        return null;
+
+    }
 
 
     const today =
@@ -589,30 +873,34 @@ function daysUntil(date) {
 
 
     today.setHours(
-        0,0,0,0
+        0,
+        0,
+        0,
+        0
     );
 
 
     const deadline =
-        new Date(date);
-
-
-    deadline.setHours(
-        0,0,0,0
-    );
+        new Date(
+            date +
+            "T00:00:00"
+        );
 
 
     return Math.ceil(
-
         (
             deadline -
             today
-        ) / 86400000
-
+        ) /
+        86400000
     );
 
 }
 
+
+/* ==========================================
+   FORMAT DATE
+========================================== */
 
 function formatDate(date) {
 
@@ -623,11 +911,14 @@ function formatDate(date) {
     }
 
 
-    const d =
-        new Date(date);
+    const value =
+        new Date(
+            date +
+            "T00:00:00"
+        );
 
 
-    return d.toLocaleDateString(
+    return value.toLocaleDateString(
         "en-GB",
         {
             day: "numeric",
@@ -639,11 +930,11 @@ function formatDate(date) {
 }
 
 
-/* =========================
-   TASK CARD
-========================= */
+/* ==========================================
+   TASK HTML
+========================================== */
 
-function taskHTML(task) {
+function createTaskHTML(task) {
 
     const progress =
         getProgress(task);
@@ -661,17 +952,21 @@ function taskHTML(task) {
         );
 
 
-    let soonClass = "";
+    let deadlineClass =
+        "";
 
 
-    if (days !== null) {
+    if (
+        days !== null
+    ) {
 
         if (days < 0) {
 
             deadlineText +=
                 " · Overdue";
 
-            soonClass = "soon";
+            deadlineClass =
+                "soon";
 
         }
 
@@ -680,7 +975,8 @@ function taskHTML(task) {
             deadlineText +=
                 " · Due today";
 
-            soonClass = "soon";
+            deadlineClass =
+                "soon";
 
         }
 
@@ -689,173 +985,251 @@ function taskHTML(task) {
             deadlineText +=
                 ` · ${days} days left`;
 
-            soonClass = "soon";
+            deadlineClass =
+                "soon";
 
         }
 
     }
 
 
-    const subtasks =
-        task.subtasks
-            .map(
+    let subtasksHTML =
+        "";
 
-                (sub,index) => `
 
-                <div class="subtask ${
-                    sub.completed
-                        ? "done"
-                        : ""
-                }">
+    if (
+        task.subtasks &&
+        task.subtasks.length
+    ) {
 
-                    <input
-                        type="checkbox"
+        subtasksHTML =
+            task.subtasks.map(
+                function (
+                    sub,
+                    index
+                ) {
 
-                        ${
-                            sub.completed
-                                ? "checked"
-                                : ""
-                        }
+                    return `
 
-                        onchange="
-                            toggleSubtask(
-                                ${task.id},
-                                ${index}
-                            )
-                        "
-                    >
+                        <div class="
+                            subtask
+                            ${
+                                sub.completed
+                                    ? "done"
+                                    : ""
+                            }
+                        ">
 
-                    <span>
-                        ${escapeHTML(
-                            sub.text
-                        )}
-                    </span>
+                            <input
+                                type="checkbox"
+                                ${
+                                    sub.completed
+                                        ? "checked"
+                                        : ""
+                                }
+                                onchange="
+                                    toggleSubtask(
+                                        ${task.id},
+                                        ${index}
+                                    )
+                                "
+                            >
 
-                </div>
+                            <span>
+                                ${escapeHTML(
+                                    sub.text
+                                )}
+                            </span>
 
-                `
+                        </div>
 
-            )
-            .join("");
+                    `;
+
+                }
+            ).join("");
+
+    } else {
+
+        subtasksHTML = `
+
+            <div class="subtask">
+
+                <span>
+                    No subtasks yet
+                </span>
+
+            </div>
+
+        `;
+
+    }
 
 
     return `
 
-    <div class="task-card">
+        <article class="task-card">
 
 
-        <div class="task-top">
+            <div class="task-top">
 
 
-            <div class="task-icon">
+                <div class="task-icon">
 
-                ${
-                    task.icon ||
-                    "🌷"
-                }
+                    ${
+                        task.icon ||
+                        "🌸"
+                    }
+
+                </div>
+
+
+                <div>
+
+                    <div class="task-title">
+
+                        ${escapeHTML(
+                            task.name
+                        )}
+
+                    </div>
+
+
+                    <div class="
+                        deadline
+                        ${deadlineClass}
+                    ">
+
+                        ${
+                            task.deadline
+                                ? "⌁ "
+                                : ""
+                        }
+
+                        ${deadlineText}
+
+                    </div>
+
+                </div>
+
 
             </div>
 
 
-            <div>
 
-                <div class="task-title">
+            <div class="progress">
 
-                    ${escapeHTML(
-                        task.name
-                    )}
-
-                </div>
-
-
-                <div class="
-                    deadline
-                    ${soonClass}
-                ">
-
-                    📅
-                    ${deadlineText}
-
-                </div>
+                <div
+                    class="progress-bar"
+                    style="
+                        width: ${progress}%;
+                    "
+                ></div>
 
             </div>
 
 
-        </div>
+            <div class="progress-row">
+
+                <span class="progress-text">
+                    ${progress}% complete
+                </span>
+
+                <span class="progress-text">
+                    ${
+                        task.subtasks
+                            ? task.subtasks.length
+                            : 0
+                    }
+                    ${
+                        task.subtasks &&
+                        task.subtasks.length === 1
+                            ? "item"
+                            : "items"
+                    }
+                </span>
+
+            </div>
 
 
-        <div class="progress">
 
-            <div
-                class="progress-bar"
-                style="
-                    width:${progress}%
-                "
-            ></div>
+            <div class="subtasks">
 
-        </div>
+                ${subtasksHTML}
+
+            </div>
 
 
-        <div class="progress-text">
 
-            ${progress}% completed
+            <div class="task-actions">
 
-        </div>
-
-
-        <div class="subtasks">
-
-            ${
-                subtasks ||
-
-                `
-                <div class="subtask">
-                    ยังไม่มีงานย่อย
-                </div>
-                `
-            }
-
-        </div>
+                <button
+                    type="button"
+                    class="edit-task"
+                    onclick="
+                        editTask(
+                            ${task.id}
+                        )
+                    "
+                >
+                    ✎ Edit
+                </button>
 
 
-        <div class="task-actions">
+                <button
+                    type="button"
+                    class="delete-task"
+                    onclick="
+                        deleteTask(
+                            ${task.id}
+                        )
+                    "
+                >
+                    Delete
+                </button>
 
-            <button
-                class="edit-task"
-                onclick="
-                    editTask(
-                        ${task.id}
-                    )
-                "
-            >
-                ✏️ Edit
-            </button>
-
-
-            <button
-                class="delete-task"
-                onclick="
-                    deleteTask(
-                        ${task.id}
-                    )
-                "
-            >
-                🗑 Delete
-            </button>
-
-        </div>
+            </div>
 
 
-    </div>
+        </article>
 
     `;
 
 }
 
 
-/* =========================
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+function emptyStateHTML() {
+
+    return `
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🌱
+            </div>
+
+            <h3>
+                Nothing here yet
+            </h3>
+
+            <p>
+                Create your first little task
+                and watch your list bloom.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================
    RENDER
-========================= */
+========================================== */
 
 function render() {
 
@@ -871,44 +1245,90 @@ function render() {
         );
 
 
+    if (
+        !dashboard ||
+        !allTasks
+    ) {
+
+        return;
+
+    }
+
+
     const sorted =
         [...tasks].sort(
+            function (
+                a,
+                b
+            ) {
 
-            (a,b) => {
+                if (
+                    !a.deadline &&
+                    !b.deadline
+                ) {
 
-                if (!a.deadline)
+                    return 0;
+
+                }
+
+
+                if (!a.deadline) {
+
                     return 1;
 
-                if (!b.deadline)
+                }
+
+
+                if (!b.deadline) {
+
                     return -1;
 
+                }
 
-                return new Date(
-                    a.deadline
-                ) -
 
-                new Date(
-                    b.deadline
+                return (
+                    new Date(
+                        a.deadline
+                    ) -
+                    new Date(
+                        b.deadline
+                    )
                 );
 
             }
-
         );
 
 
-    dashboard.innerHTML =
+    if (
+        sorted.length === 0
+    ) {
 
-        sorted
-            .slice(0,6)
-            .map(taskHTML)
-            .join("");
+        dashboard.innerHTML =
+            emptyStateHTML();
 
 
-    allTasks.innerHTML =
+        allTasks.innerHTML =
+            emptyStateHTML();
 
-        sorted
-            .map(taskHTML)
-            .join("");
+    } else {
+
+        dashboard.innerHTML =
+            sorted
+                .slice(0, 4)
+                .map(
+                    createTaskHTML
+                )
+                .join("");
+
+
+        allTasks.innerHTML =
+            sorted
+                .map(
+                    createTaskHTML
+                )
+                .join("");
+
+    }
 
 
     updateSummary();
@@ -916,9 +1336,9 @@ function render() {
 }
 
 
-/* =========================
+/* ==========================================
    SUMMARY
-========================= */
+========================================== */
 
 function updateSummary() {
 
@@ -928,22 +1348,25 @@ function updateSummary() {
 
     const completed =
         tasks.filter(
+            function (task) {
 
-            task =>
-                getProgress(task)
-                === 100
+                return (
+                    getProgress(task) ===
+                    100
+                );
 
+            }
         ).length;
 
 
-    const progress =
-        total - completed;
+    const inProgress =
+        total -
+        completed;
 
 
     const dueSoon =
         tasks.filter(
-
-            task => {
+            function (task) {
 
                 const days =
                     daysUntil(
@@ -959,94 +1382,98 @@ function updateSummary() {
 
                     days <= 3 &&
 
-                    getProgress(task)
-                    < 100
+                    getProgress(task) < 100
 
                 );
 
             }
-
         ).length;
 
 
-    document
-        .getElementById(
-            "totalTasks"
-        )
-        .textContent =
+    document.getElementById(
+        "totalTasks"
+    ).textContent =
         total;
 
 
-    document
-        .getElementById(
-            "progressTasks"
-        )
-        .textContent =
-        progress;
+    document.getElementById(
+        "progressTasks"
+    ).textContent =
+        inProgress;
 
 
-    document
-        .getElementById(
-            "dueTasks"
-        )
-        .textContent =
+    document.getElementById(
+        "dueTasks"
+    ).textContent =
         dueSoon;
 
 
-    document
-        .getElementById(
-            "completedTasks"
-        )
-        .textContent =
+    document.getElementById(
+        "completedTasks"
+    ).textContent =
         completed;
 
 }
 
 
-/* =========================
-   SECURITY
-========================= */
+/* ==========================================
+   ESCAPE HTML
+========================================== */
 
-function escapeHTML(text) {
+function escapeHTML(value) {
 
-    const div =
+    const element =
         document.createElement(
             "div"
         );
 
 
-    div.textContent =
-        text;
+    element.textContent =
+        value;
 
 
-    return div.innerHTML;
+    return element.innerHTML;
 
 }
 
 
-/* =========================
-   TODAY
-========================= */
+/* ==========================================
+   CLOSE MODAL WHEN CLICK BACKDROP
+========================================== */
 
-document
-    .getElementById("today")
-    .textContent =
+document.addEventListener(
+    "click",
+    function (event) {
 
-    new Date()
-        .toLocaleDateString(
+        if (
+            event.target.classList.contains(
+                "modal-backdrop"
+            )
+        ) {
 
-            "en-GB",
+            closeModal();
 
-            {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
-            }
+        }
 
-        );
+    }
+);
 
 
-/* START */
+/* ==========================================
+   ESC KEY
+========================================== */
 
-render();
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
