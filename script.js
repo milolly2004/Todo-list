@@ -1,115 +1,300 @@
-let tasks = JSON.parse(localStorage.getItem("bloomyTasks")) || [];
-
-const categoryNames = {
-    research: "🌸 วิจัย",
-    university: "💜 มหาวิทยาลัย",
-    teaching: "🌼 งานสอน",
-    personal: "🌿 ส่วนตัว",
-    other: "🩵 อื่น ๆ"
-};
+/* =========================
+   BLOOMY PLANNER
+========================= */
 
 
-/* PAGE */
+/* ICONS */
 
-function showPage(page) {
+const icons = [
+    "🌸",
+    "🌷",
+    "🌼",
+    "🌻",
+    "🪻",
+    "🌹",
+    "🌺",
+    "🌿",
+    "🍀",
+    "🍃",
+    "📚",
+    "📝",
+    "💻",
+    "📊",
+    "🎓",
+    "💡",
+    "🧪",
+    "📖",
+    "⭐",
+    "🐝"
+];
 
-    document.getElementById("dashboardPage")
-        .classList.toggle("hidden", page !== "dashboard");
 
-    document.getElementById("tasksPage")
-        .classList.toggle("hidden", page !== "tasks");
+/* DATA */
 
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-        btn.classList.remove("active");
+let tasks =
+    JSON.parse(
+        localStorage.getItem("bloomyTasks")
+    ) || [];
+
+
+let editingTaskId = null;
+
+let selectedIcon = icons[0];
+
+
+/* =========================
+   ICON PICKER
+========================= */
+
+function renderIconPicker() {
+
+    const picker =
+        document.getElementById("iconPicker");
+
+    picker.innerHTML = "";
+
+    icons.forEach(icon => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "icon-option";
+
+        button.textContent = icon;
+
+
+        if (icon === selectedIcon) {
+            button.classList.add("selected");
+        }
+
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectedIcon = icon;
+
+                renderIconPicker();
+
+            }
+        );
+
+
+        picker.appendChild(button);
+
     });
 
-    if (page === "dashboard") {
-        document.querySelectorAll(".nav-btn")[0]
-            .classList.add("active");
-    } else {
-        document.querySelectorAll(".nav-btn")[1]
-            .classList.add("active");
-    }
-
-    render();
 }
 
 
-/* MODAL */
+/* =========================
+   PAGE
+========================= */
+
+function showPage(page) {
+
+    document
+        .getElementById("dashboardPage")
+        .classList.toggle(
+            "hidden",
+            page !== "dashboard"
+        );
+
+
+    document
+        .getElementById("tasksPage")
+        .classList.toggle(
+            "hidden",
+            page !== "tasks"
+        );
+
+
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    if (page === "dashboard") {
+
+        document
+            .querySelectorAll(".nav-btn")[0]
+            .classList.add("active");
+
+    } else {
+
+        document
+            .querySelectorAll(".nav-btn")[1]
+            .classList.add("active");
+
+    }
+
+
+    render();
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
 
 function openModal() {
 
-    document.getElementById("modal")
+    editingTaskId = null;
+
+    selectedIcon = icons[0];
+
+
+    document
+        .getElementById("modal")
         .classList.remove("hidden");
 
-    document.getElementById("taskName").value = "";
-    document.getElementById("taskDeadline").value = "";
 
-    document.getElementById("subtaskInputs").innerHTML = "";
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        "🌷 Create a new task";
+
+
+    document
+        .getElementById("saveButton")
+        .textContent =
+        "🌷 Create Task";
+
+
+    document
+        .getElementById("taskName")
+        .value = "";
+
+
+    document
+        .getElementById("taskDeadline")
+        .value = "";
+
+
+    document
+        .getElementById("subtaskInputs")
+        .innerHTML = "";
+
 
     addSubtaskInput();
+
+    renderIconPicker();
+
 }
 
 
 function closeModal() {
 
-    document.getElementById("modal")
+    document
+        .getElementById("modal")
         .classList.add("hidden");
+
 }
 
 
-/* SUBTASK INPUT */
+/* =========================
+   SUBTASK INPUT
+========================= */
 
-function addSubtaskInput() {
+function addSubtaskInput(value = "") {
 
     const container =
-        document.getElementById("subtaskInputs");
+        document.getElementById(
+            "subtaskInputs"
+        );
 
-    const input = document.createElement("input");
+
+    const input =
+        document.createElement("input");
+
 
     input.type = "text";
-    input.placeholder = "เช่น ทำแบบสัมภาษณ์";
-    input.className = "new-subtask";
+
+    input.className =
+        "new-subtask";
+
+
+    input.placeholder =
+        "เช่น ทำแบบสัมภาษณ์";
+
+
+    input.value = value;
+
+
+    input.style.width = "100%";
+
+    input.style.padding = "10px";
+
+    input.style.border =
+        "1px solid #eadfe5";
+
+    input.style.borderRadius =
+        "10px";
 
     input.style.marginTop = "8px";
 
+
     container.appendChild(input);
+
 }
 
 
-/* CREATE TASK */
+/* =========================
+   SAVE TASK
+========================= */
 
-function createTask() {
+function saveTask() {
 
     const name =
-        document.getElementById("taskName")
-        .value.trim();
+        document
+            .getElementById("taskName")
+            .value
+            .trim();
 
-    const category =
-        document.getElementById("taskCategory")
-        .value;
 
     const deadline =
-        document.getElementById("taskDeadline")
-        .value;
+        document
+            .getElementById("taskDeadline")
+            .value;
 
-    const subtaskInputs =
-        document.querySelectorAll(".new-subtask");
 
     if (!name) {
+
         alert("กรุณาใส่ชื่องาน");
+
         return;
+
     }
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".new-subtask"
+        );
+
 
     const subtasks = [];
 
-    subtaskInputs.forEach(input => {
+
+    inputs.forEach(input => {
 
         if (input.value.trim()) {
 
             subtasks.push({
-                text: input.value.trim(),
+
+                text:
+                    input.value.trim(),
+
                 completed: false
+
             });
 
         }
@@ -117,122 +302,330 @@ function createTask() {
     });
 
 
-    const task = {
+    /* EDIT */
 
-        id: Date.now(),
+    if (editingTaskId !== null) {
 
-        name,
-
-        category,
-
-        deadline,
-
-        subtasks
-
-    };
+        const task =
+            tasks.find(
+                t =>
+                    t.id === editingTaskId
+            );
 
 
-    tasks.push(task);
+        if (task) {
+
+            task.name = name;
+
+            task.icon = selectedIcon;
+
+            task.deadline = deadline;
+
+
+            /*
+                Keep old completed status
+                when editing subtasks
+            */
+
+            subtasks.forEach(
+                (newSub, index) => {
+
+                    if (
+                        task.subtasks[index] &&
+                        task.subtasks[index].text
+                            === newSub.text
+                    ) {
+
+                        newSub.completed =
+                            task.subtasks[index]
+                                .completed;
+
+                    }
+
+                }
+            );
+
+
+            task.subtasks =
+                subtasks;
+
+        }
+
+    }
+
+
+    /* CREATE */
+
+    else {
+
+        tasks.push({
+
+            id: Date.now(),
+
+            name: name,
+
+            icon: selectedIcon,
+
+            deadline: deadline,
+
+            subtasks: subtasks
+
+        });
+
+    }
+
 
     saveTasks();
 
     closeModal();
 
     render();
+
 }
 
 
-/* SAVE */
+/* =========================
+   EDIT TASK
+========================= */
+
+function editTask(id) {
+
+    const task =
+        tasks.find(
+            t => t.id === id
+        );
+
+
+    if (!task) return;
+
+
+    editingTaskId = id;
+
+    selectedIcon =
+        task.icon || icons[0];
+
+
+    document
+        .getElementById("modal")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("modalTitle")
+        .textContent =
+        "✏️ Edit task";
+
+
+    document
+        .getElementById("saveButton")
+        .textContent =
+        "💾 Save Changes";
+
+
+    document
+        .getElementById("taskName")
+        .value =
+        task.name;
+
+
+    document
+        .getElementById("taskDeadline")
+        .value =
+        task.deadline || "";
+
+
+    document
+        .getElementById("subtaskInputs")
+        .innerHTML = "";
+
+
+    if (task.subtasks.length) {
+
+        task.subtasks.forEach(
+            sub => {
+
+                addSubtaskInput(
+                    sub.text
+                );
+
+            }
+        );
+
+    } else {
+
+        addSubtaskInput();
+
+    }
+
+
+    renderIconPicker();
+
+}
+
+
+/* =========================
+   DELETE
+========================= */
+
+function deleteTask(id) {
+
+    if (
+        !confirm(
+            "ต้องการลบงานนี้ใช่ไหม?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    tasks =
+        tasks.filter(
+            task =>
+                task.id !== id
+        );
+
+
+    saveTasks();
+
+    render();
+
+}
+
+
+/* =========================
+   TOGGLE SUBTASK
+========================= */
+
+function toggleSubtask(
+    taskId,
+    subIndex
+) {
+
+    const task =
+        tasks.find(
+            t =>
+                t.id === taskId
+        );
+
+
+    if (!task) return;
+
+
+    task.subtasks[subIndex]
+        .completed =
+        !task.subtasks[subIndex]
+            .completed;
+
+
+    saveTasks();
+
+    render();
+
+}
+
+
+/* =========================
+   SAVE LOCAL DATA
+========================= */
 
 function saveTasks() {
 
     localStorage.setItem(
+
         "bloomyTasks",
+
         JSON.stringify(tasks)
+
     );
 
 }
 
 
-/* TOGGLE SUBTASK */
-
-function toggleSubtask(taskId, subIndex) {
-
-    const task =
-        tasks.find(t => t.id === taskId);
-
-    if (!task) return;
-
-    task.subtasks[subIndex].completed =
-        !task.subtasks[subIndex].completed;
-
-    saveTasks();
-
-    render();
-}
-
-
-/* DELETE */
-
-function deleteTask(id) {
-
-    if (!confirm("ต้องการลบงานนี้ใช่ไหม?")) {
-        return;
-    }
-
-    tasks =
-        tasks.filter(task => task.id !== id);
-
-    saveTasks();
-
-    render();
-}
-
-
-/* PROGRESS */
+/* =========================
+   PROGRESS
+========================= */
 
 function getProgress(task) {
 
     if (!task.subtasks.length) {
+
         return 0;
+
     }
+
 
     const completed =
         task.subtasks.filter(
-            sub => sub.completed
+            sub =>
+                sub.completed
         ).length;
 
+
     return Math.round(
-        (completed / task.subtasks.length) * 100
+
+        (
+            completed /
+            task.subtasks.length
+        ) * 100
+
     );
+
 }
 
 
-/* DEADLINE */
+/* =========================
+   DEADLINE
+========================= */
 
 function daysUntil(date) {
 
     if (!date) return null;
 
-    const today = new Date();
 
-    today.setHours(0, 0, 0, 0);
+    const today =
+        new Date();
 
-    const deadline = new Date(date);
 
-    deadline.setHours(0, 0, 0, 0);
+    today.setHours(
+        0,0,0,0
+    );
+
+
+    const deadline =
+        new Date(date);
+
+
+    deadline.setHours(
+        0,0,0,0
+    );
+
 
     return Math.ceil(
-        (deadline - today) / 86400000
+
+        (
+            deadline -
+            today
+        ) / 86400000
+
     );
+
 }
 
 
 function formatDate(date) {
 
-    if (!date) return "No deadline";
+    if (!date) {
 
-    const d = new Date(date);
+        return "No deadline";
+
+    }
+
+
+    const d =
+        new Date(date);
+
 
     return d.toLocaleDateString(
         "en-GB",
@@ -242,81 +635,151 @@ function formatDate(date) {
             year: "numeric"
         }
     );
+
 }
 
 
-/* TASK CARD */
+/* =========================
+   TASK CARD
+========================= */
 
 function taskHTML(task) {
 
-    const progress = getProgress(task);
+    const progress =
+        getProgress(task);
 
-    const days = daysUntil(task.deadline);
+
+    const days =
+        daysUntil(
+            task.deadline
+        );
+
 
     let deadlineText =
-        formatDate(task.deadline);
+        formatDate(
+            task.deadline
+        );
+
 
     let soonClass = "";
+
 
     if (days !== null) {
 
         if (days < 0) {
-            deadlineText += " · Overdue";
+
+            deadlineText +=
+                " · Overdue";
+
             soonClass = "soon";
+
         }
 
         else if (days === 0) {
-            deadlineText += " · Due today";
+
+            deadlineText +=
+                " · Due today";
+
             soonClass = "soon";
+
         }
 
         else if (days <= 3) {
-            deadlineText += ` · ${days} days left`;
+
+            deadlineText +=
+                ` · ${days} days left`;
+
             soonClass = "soon";
+
         }
 
     }
 
 
-    const subtasks = task.subtasks.map(
-        (sub, index) => `
+    const subtasks =
+        task.subtasks
+            .map(
 
-        <div class="subtask ${sub.completed ? "done" : ""}">
+                (sub,index) => `
 
-            <input
-                type="checkbox"
-                ${sub.completed ? "checked" : ""}
-                onchange="toggleSubtask(${task.id}, ${index})"
-            >
+                <div class="subtask ${
+                    sub.completed
+                        ? "done"
+                        : ""
+                }">
 
-            <span>${escapeHTML(sub.text)}</span>
+                    <input
+                        type="checkbox"
 
-        </div>
+                        ${
+                            sub.completed
+                                ? "checked"
+                                : ""
+                        }
 
-    `).join("");
+                        onchange="
+                            toggleSubtask(
+                                ${task.id},
+                                ${index}
+                            )
+                        "
+                    >
+
+                    <span>
+                        ${escapeHTML(
+                            sub.text
+                        )}
+                    </span>
+
+                </div>
+
+                `
+
+            )
+            .join("");
 
 
     return `
 
-    <div class="task-card ${task.category}">
+    <div class="task-card">
 
-        <div class="task-head">
+
+        <div class="task-top">
+
+
+            <div class="task-icon">
+
+                ${
+                    task.icon ||
+                    "🌷"
+                }
+
+            </div>
+
 
             <div>
 
                 <div class="task-title">
-                    ${escapeHTML(task.name)}
+
+                    ${escapeHTML(
+                        task.name
+                    )}
+
                 </div>
 
-                <div class="deadline ${soonClass}">
-                    📅 ${deadlineText}
+
+                <div class="
+                    deadline
+                    ${soonClass}
+                ">
+
+                    📅
+                    ${deadlineText}
+
                 </div>
 
             </div>
 
-            <span class="category">
-                ${categoryNames[task.category]}
-            </span>
 
         </div>
 
@@ -325,71 +788,124 @@ function taskHTML(task) {
 
             <div
                 class="progress-bar"
-                style="width:${progress}%"
+                style="
+                    width:${progress}%
+                "
             ></div>
 
         </div>
 
+
         <div class="progress-text">
+
             ${progress}% completed
+
         </div>
 
 
         <div class="subtasks">
 
-            ${subtasks || `
+            ${
+                subtasks ||
+
+                `
                 <div class="subtask">
                     ยังไม่มีงานย่อย
                 </div>
-            `}
+                `
+            }
 
         </div>
 
 
-        <button
-            class="delete-task"
-            onclick="deleteTask(${task.id})"
-        >
-            🗑 Delete
-        </button>
+        <div class="task-actions">
+
+            <button
+                class="edit-task"
+                onclick="
+                    editTask(
+                        ${task.id}
+                    )
+                "
+            >
+                ✏️ Edit
+            </button>
+
+
+            <button
+                class="delete-task"
+                onclick="
+                    deleteTask(
+                        ${task.id}
+                    )
+                "
+            >
+                🗑 Delete
+            </button>
+
+        </div>
+
 
     </div>
 
     `;
+
 }
 
 
-/* RENDER */
+/* =========================
+   RENDER
+========================= */
 
 function render() {
 
     const dashboard =
-        document.getElementById("dashboardTasks");
+        document.getElementById(
+            "dashboardTasks"
+        );
+
 
     const allTasks =
-        document.getElementById("allTasks");
+        document.getElementById(
+            "allTasks"
+        );
 
 
     const sorted =
-        [...tasks].sort((a, b) => {
+        [...tasks].sort(
 
-            if (!a.deadline) return 1;
-            if (!b.deadline) return -1;
+            (a,b) => {
 
-            return new Date(a.deadline)
-                - new Date(b.deadline);
+                if (!a.deadline)
+                    return 1;
 
-        });
+                if (!b.deadline)
+                    return -1;
+
+
+                return new Date(
+                    a.deadline
+                ) -
+
+                new Date(
+                    b.deadline
+                );
+
+            }
+
+        );
 
 
     dashboard.innerHTML =
+
         sorted
-            .slice(0, 6)
+            .slice(0,6)
             .map(taskHTML)
             .join("");
 
 
     allTasks.innerHTML =
+
         sorted
             .map(taskHTML)
             .join("");
@@ -400,75 +916,137 @@ function render() {
 }
 
 
-/* SUMMARY */
+/* =========================
+   SUMMARY
+========================= */
 
 function updateSummary() {
 
-    const total = tasks.length;
+    const total =
+        tasks.length;
+
 
     const completed =
         tasks.filter(
-            task => getProgress(task) === 100
+
+            task =>
+                getProgress(task)
+                === 100
+
         ).length;
+
 
     const progress =
         total - completed;
 
+
     const dueSoon =
-        tasks.filter(task => {
+        tasks.filter(
 
-            const days =
-                daysUntil(task.deadline);
+            task => {
 
-            return days !== null &&
-                days >= 0 &&
-                days <= 3 &&
-                getProgress(task) < 100;
-
-        }).length;
+                const days =
+                    daysUntil(
+                        task.deadline
+                    );
 
 
-    document.getElementById("totalTasks")
-        .textContent = total;
+                return (
 
-    document.getElementById("progressTasks")
-        .textContent = progress;
+                    days !== null &&
 
-    document.getElementById("dueTasks")
-        .textContent = dueSoon;
+                    days >= 0 &&
 
-    document.getElementById("completedTasks")
-        .textContent = completed;
+                    days <= 3 &&
+
+                    getProgress(task)
+                    < 100
+
+                );
+
+            }
+
+        ).length;
+
+
+    document
+        .getElementById(
+            "totalTasks"
+        )
+        .textContent =
+        total;
+
+
+    document
+        .getElementById(
+            "progressTasks"
+        )
+        .textContent =
+        progress;
+
+
+    document
+        .getElementById(
+            "dueTasks"
+        )
+        .textContent =
+        dueSoon;
+
+
+    document
+        .getElementById(
+            "completedTasks"
+        )
+        .textContent =
+        completed;
 
 }
 
 
-/* SECURITY */
+/* =========================
+   SECURITY
+========================= */
 
 function escapeHTML(text) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    div.textContent = text;
+
+    div.textContent =
+        text;
+
 
     return div.innerHTML;
+
 }
 
 
-/* TODAY */
+/* =========================
+   TODAY
+========================= */
 
-document.getElementById("today")
+document
+    .getElementById("today")
     .textContent =
-    new Date().toLocaleDateString(
-        "en-GB",
-        {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }
-    );
 
+    new Date()
+        .toLocaleDateString(
+
+            "en-GB",
+
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+
+        );
+
+
+/* START */
 
 render();
